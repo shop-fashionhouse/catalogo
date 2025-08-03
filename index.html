@@ -171,7 +171,7 @@
         .info-link i {
             font-size: 2.5em;
         }
-        
+
         /* Estilos para la nueva sección de descarga de la app */
         .download-app-section {
             margin-top: 40px;
@@ -305,7 +305,7 @@
                 margin-top: 30px;
             }
             
-            /* Corrección: Se ajusta el tamaño de la fuente para el texto de los botones de info */
+            /* Corrección: Los botones de información ahora ocuparán un ancho del 45% y se mantendrán horizontales */
             .info-button-group {
                 gap: 10px;
                 flex-direction: row;
@@ -316,26 +316,18 @@
                 width: 45%;
                 height: 100px; 
                 padding: 15px;
-                /* Nuevo: Se reduce el tamaño de la fuente para que el texto encaje mejor */
-                font-size: 0.9em; 
             }
             
-            /* Corrección: Se ajusta el diseño de los botones de descarga de la app para que tengan el mismo tamaño */
+            /* Corrección: Los botones de la app se mantienen horizontales, con ancho automático */
             .app-download-buttons {
-                flex-wrap: wrap;
-                justify-content: center;
+                flex-direction: row;
+                align-items: center;
                 gap: 10px;
             }
-            
-            .app-link {
-                width: calc(50% - 5px); /* Ajustado para que ambos botones tengan el mismo tamaño en una línea */
-                padding: 10px 15px; /* Se ajustó el padding para mejor visualización */
-                text-align: center; /* Alineación del texto para centrarlo si es necesario */
-            }
 
-            /* Nuevo estilo para los iconos en botones de info y app en móviles */
-            .info-link i, .app-link i {
-                font-size: 2em; /* Reducir el tamaño de los iconos */
+            .app-link {
+                width: auto;
+                padding: 10px 20px;
             }
         }
 
@@ -429,6 +421,8 @@
             </div>
         </div>
 
+
+
         <!-- Nueva sección para descargar la app de Shein -->
         <div class="download-app-section">
             <h2 class="h2">Descarga la app de Shein</h2>
@@ -443,6 +437,8 @@
                 </a>
             </div>
         </div>
+
+
         
     </div>
 
