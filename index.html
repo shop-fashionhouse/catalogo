@@ -171,7 +171,7 @@
         .info-link i {
             font-size: 2.5em;
         }
-
+        
         /* Estilos para la nueva sección de descarga de la app */
         .download-app-section {
             margin-top: 40px;
@@ -305,7 +305,7 @@
                 margin-top: 30px;
             }
             
-            /* Corrección: Los botones de información ahora ocuparán un ancho del 45% y se mantendrán horizontales */
+            /* Corrección: Se ajusta el tamaño de la fuente para el texto de los botones de info */
             .info-button-group {
                 gap: 10px;
                 flex-direction: row;
@@ -316,18 +316,26 @@
                 width: 45%;
                 height: 100px; 
                 padding: 15px;
+                /* Nuevo: Se reduce el tamaño de la fuente para que el texto encaje mejor */
+                font-size: 0.9em; 
             }
             
-            /* Corrección: Los botones de la app se mantienen horizontales, con ancho automático */
+            /* Corrección: Se ajusta el diseño de los botones de descarga de la app para que tengan el mismo tamaño */
             .app-download-buttons {
-                flex-direction: row;
-                align-items: center;
+                flex-wrap: wrap;
+                justify-content: center;
                 gap: 10px;
             }
-
+            
             .app-link {
-                width: auto;
-                padding: 10px 20px;
+                width: calc(50% - 5px); /* Ajustado para que ambos botones tengan el mismo tamaño en una línea */
+                padding: 10px 15px; /* Se ajustó el padding para mejor visualización */
+                text-align: center; /* Alineación del texto para centrarlo si es necesario */
+            }
+
+            /* Nuevo estilo para los iconos en botones de info y app en móviles */
+            .info-link i, .app-link i {
+                font-size: 2em; /* Reducir el tamaño de los iconos */
             }
         }
 
@@ -421,8 +429,6 @@
             </div>
         </div>
 
-
-
         <!-- Nueva sección para descargar la app de Shein -->
         <div class="download-app-section">
             <h2 class="h2">Descarga la app de Shein</h2>
@@ -437,8 +443,6 @@
                 </a>
             </div>
         </div>
-
-
         
     </div>
 
@@ -494,12 +498,11 @@
                     '<li>Tiempo estimado de entrega: <strong>30 a 35 días</strong></li>' +
                     '</ul>' +
                     '<hr style="border: 1px solid #ccc; margin: 20px 0;">' +
-                    '<div style="text-align: left; line-height: 1.5; padding-left: 20px;">' + 
-                    '<h4 style="margin-top: 20px; margin-bottom: 5px;">Aceptamos transferencias bancarias</h4>' +
-                    '<ul style="list-style-type: none; padding-left: 0;">' +
-                    '<li>BAC, Atlántida, Banpais, CUSCATLAN, FICOHSA, Tigo Money, Tengo.</li>' +
-                    '<li><strong>También contamos con botón de pago.</strong></li>' +
-                    '</ul>' +
+                    // Se ha mejorado la estructura de la sección de métodos de pago
+                    '<div style="text-align: left; line-height: 1.5; padding-left: 20px;">' +
+                    '<p style="margin-bottom: 5px;"><strong>Aceptamos transferencias bancarias a:</strong></p>' +
+                    '<p style="font-weight: bold; margin-top: 5px;">BAC, Atlántida, Banpais, CUSCATLAN, FICOHSA, Tigo Money, Tengo.</p>' +
+                    '<p style="margin-top: 15px; font-weight: bold;">También contamos con botón de pago.</p>' +
                     '</div>' +
                     '<hr style="border: 1px solid #ccc; margin: 20px 0;">' +
                     '<h4 style="text-align: center; margin-top: 20px; margin-bottom: 5px;">Precios especiales para mayoristas</h4>',
