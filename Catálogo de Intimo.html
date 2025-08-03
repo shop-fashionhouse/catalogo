@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intimo Delights!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fce4ec;
+        }
+        .logo {
+            display: block;
+            margin: 30px auto 20px;
+            width: 150px;
+        }
+        .search-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .search-container input {
+            width: 90%;
+            max-width: 500px;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 1px solid #DEE2E6;
+            border-radius: 25px;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .search-container input:focus {
+            border-color: #e91e63;
+            box-shadow: 0 2px 8px rgba(233, 30, 99, 0.2);
+        }
+        .product-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+        }
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #FFFFFF;
+            border: 1px solid #DEE2E6;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+            width: calc(50% - 10px);
+            position: relative;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .product-card img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .product-card .details {
+            width: 100%;
+        }
+        .product-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin: 0 0 5px;
+            color: #343A40;
+        }
+        .product-card p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            color: #6C757D;
+            margin: 0;
+        }
+        .product-card .price {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            color: #e91e63;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .product-card .stock-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #28a745;
+            color: #fff;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 5px 8px;
+            border-radius: 5px;
+            z-index: 10;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 60px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 10px;
+        }
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #bbb;
+        }
+        .thumbnails {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .thumbnails img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            margin: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
+            border-radius: 5px;
+        }
+        .thumbnails img:hover, .thumbnails img.active {
+            border-color: #e91e63;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="https://files.jotform.com/jufs/jeancarlozelaya/form_files/Intimo%20Delights!%20(Sin%20Fondo).6709c792684de5.91296802.png?md5=0fUZptNrCU6RBNmBjRJnOQ&expires=1738546878" alt="Logo Tienda" class="logo">
+
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Buscar productos..." oninput="filterProducts()">
+    </div>
+
+    <div class="product-container" id="product-container">
+    </div>
+
+    <div id="modal-template" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modal-image">
+        <div class="thumbnails" id="modal-thumbnails">
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            {
+                id: 'product1',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/09/04/7d/17254572424b636c2f1b4e370ed5401fa37ef82b84.webp',
+                title: 'Lubricante Frutal de Fresa - Suavidad y Placer',
+                price: 'Lps. 400.00',
+                stock: 4,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/7d/17254572424b636c2f1b4e370ed5401fa37ef82b84.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/7d/1725457242016bdf58c91be1fface7267ec7d54af1.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/7d/1725457242e5cd7782e4ce473af9be70bab04c5606.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/d9/1725457243c0b7dffd53eac8eb208edf093dd0549a.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/bb/1725457320b71ee9d3c0c5d1678913d9aad24c216b.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/7d/17254572422d227944d563cd0b60cc3dd9c78f499c.webp'
+                ]
+            },
+            {
+                id: 'product2',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2023/06/27/1687880142e2950754f103e0d2af5204533d7f157f_thumbnail_750x999.webp',
+                title: 'Enema - Ducha Íntima para Limpieza Profunda',
+                price: 'Lps. 230.00',
+                stock: 3,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/27/1687880142e2950754f103e0d2af5204533d7f157f_thumbnail_750x999.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/27/16878801448ea96896135dd22c4ce226082c710d5d_thumbnail_750x999.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/27/1687880145df30b0b07588bd29ddeba8dd825cff01_thumbnail_750x999.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/27/1687880145cd3e425792bbe68ffe4287d7714688f8_thumbnail_750x999.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/27/1687880146484cdfb2c27ff1a98d2971fe0bb4f511_thumbnail_750x999.webp'
+                ]
+            },
+            {
+                id: 'product3',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/09/27/b4/1727406835aedfe040373e8b24ccc15acb321cbb8a_square.webp',
+                title: 'Estimulador Anal Inalámbrico con Control Remoto',
+                price: 'Lps. 380.00',
+                stock: 2,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/27/b4/1727406835aedfe040373e8b24ccc15acb321cbb8a_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/27/e1/17274068854112022064bb7ad30f64ba06965618ba_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/07/6a/1728282772a3ef711e0e1e8e0beada77aa35f9914a_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/27/69/1727406909086e62524032f566fe6637e1c06125b6_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/27/e3/1727406919083f3b26838496bc2bb1be37aa3d5833_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/27/ec/172740693033d3a777a8cc236aae55db0c66661d0f_square.webp'
+                ]
+            },
+            {
+                id: 'product4',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2023/11/17/7a/1700189317ec49a02f7c6d02634c2ab6e54cd48431.webp',
+                title: 'Masturbador Masculino Portátil',
+                price: 'Lps. 700.00',
+                stock: 3,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/7a/1700189317ec49a02f7c6d02634c2ab6e54cd48431.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/7a/17001893176033f2236f7bbdd63bb05fd2206c3281.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/7a/1700189317db7ece359d415ea793ba4bc245c1d47a.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/8c/1700189328d297cc91e9f89433c74a549fb503ed5d.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/7a/1700189317a5a3e576af9c8297abbc894863702f17.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/7a/1700189317678dae4888f2a539b576576ab0177f7e.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/8c/17001893285dfb366fdbb1fba90a731accd061ee02.webp'
+                ]
+            },
+            {
+                id: 'product5',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2023/06/13/168662838368c912f7560d52128a892eb088dcbd1f.webp',
+                title: 'Huevo Vibrador Inalámbrico',
+                price: 'Lps. 410.00',
+                stock: 1,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/168662838368c912f7560d52128a892eb088dcbd1f.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/16866283714dc205a092d38004e458110962ab3fb0.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/1686628360b3ec05efa27ea5b717fbadfbf23418f2.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/1686628359c5aca1b374d3a30c57e6f6a48bdf76d1.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/1686628359c4ece4f99cfcdd179985b671ae999064.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/1686628359c4122eec7879ef14c8483ecfb9332636.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/16866283601b47bb6320feeedf93b0693d67e197ff.webp'
+                ]
+            },
+            {
+                id: 'product6',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/09/13/b2/17261983465ce15cc7dc82c6598ba4c99241fc149f.webp',
+                title: 'Magic Wand - Estimulador Potente y Compacto',
+                price: 'Lps. 410.00',
+                stock: 3,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/13/b2/17261983465ce15cc7dc82c6598ba4c99241fc149f.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/13/46/1726198266707c10a1fb3b728bc1b13bd77889ca42.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/13/46/1726198266fa358eb6037a697504b621e2e0fc8244.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/13/50/1726198267b0a2dbdbedb085cb8aea8ae674f7bd8a.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/13/46/172619826602b13a3460b01d5e7bc2fc6332e1724a.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/13/8a/17261982863cbd29926e9a138f21738cc91cbe71ec.webp'
+                ]
+            },
+            {
+                id: 'product7',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/172238907867e69d485a573c5746557ea100342930.webp',
+                title: 'Estimulador Vaginal de 10 Velocidades',
+                price: 'Lps. 700.00',
+                stock: 4,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/172238907867e69d485a573c5746557ea100342930.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/1722389078bcdc22172cf94f764f2532a1388ca308.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/1722389078ce65e1fbeaeafb2fa0b3c73de2870c8c.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/07/31/a6/1722389079bdd9c3f65f4749a29edfd220f9043caf.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/08/22/be/1724289035af2c3b2deed8243c8f60c9c906291bbb.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/1722389078b8b626065fd5ad3532d5878a8f729ac3.webp'
+                ]
+            },
+            {
+                id: 'product8',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/11/04/11/173071253592e92528d29e7b15e00812dc8e75f775.webp',
+                title: 'Dildo Realista de 8.7"',
+                price: 'Lps. 900.00',
+                stock: 2,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/11/04/11/173071253592e92528d29e7b15e00812dc8e75f775.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/01/25/4c/170615243722e9091b6871f6d644f827d636cd18e4.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/29/ce/1730167002f9c6b97e3355cba953e2918caf514492.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/29/ce/17301670025b8d4aa2fa5ac21f29c45f13c7f62b98.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/01/25/4c/17061524373e9a66c310767a0795937a3623d79aee.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/01/25/4c/170615243745a509289e3805cb847d0be3167ab43e.webp'
+                ]
+            },
+            {
+                id: 'product9',
+                image: 'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/1f64783a-de40-4c33-86a7-1ab6d2898378.jpg',
+                title: 'Varita Vibradora Potente',
+                price: 'Lps. 990.00',
+                stock: 2,
+                size: '',
+                thumbnails: [
+                    'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/1f64783a-de40-4c33-86a7-1ab6d2898378.jpg',
+                    'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/e5ecc26c-d7d1-46d8-913d-689d8ffbe555.jpg',
+                    'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/a90d8ef3-da92-4dc3-88e8-c022a1db4225.jpg',
+                    'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/49b8a38d-713c-4f9d-99d8-3f9cd3573328.jpg',
+                    'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/ef1dd05e-3afb-47b6-8e04-118c995cc8df.jpg',
+                    'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/d448044c-f89b-4807-b57f-1be042f5f3c0.jpg'
+                ]
+            },
+            {
+                id: 'product10',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/10/15/64/1728957434b31591409de0da34df4d0904618b6240.webp',
+                title: 'Vibrador con Embestida Realista y Ultra Placer',
+                price: 'Lps. 990.00',
+                stock: 1,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/15/64/1728957434b31591409de0da34df4d0904618b6240.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/13/1728466914c46b17eef4de853305263f1c84e35d09.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/09/172846657012d7a06e6196656edf3be47b9c28915e.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/d9/1728466923c730210b0df6dd513cff4874b46e8328.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/71/1728466939c28b58d37a17063ec8de036b3d4bf932.gif',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/16/1728466972dc114ba415a23b8ccb691bb042fa194b.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/00/17284669938d3bf4987710fafcd16ecef9f6d91b4d.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/17/17284669311d49deea9e09312fecc12225a32c2d79.gif'
+                ]
+            },
+
+            {
+                id: 'product12',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/03/07/91/17097866539ac0cb3a2666fa9fe30ae032e9acdcc8.webp',
+                title: 'Secret Bliss – Mini Vibrador Discreto y Potente',
+                price: 'Lps. 300.00',
+                stock: 2,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/03/07/91/17097866539ac0cb3a2666fa9fe30ae032e9acdcc8.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/16/16868915191552831613193cae35f4459ed3ffd919.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/16/16868915199b8cd0cf194bc2ec420cd6c46431f0a4.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/16/16868915196657b7bae28cdfa5ae7709c03c58e837.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/16/16868915191ed953ecdf350a7f58d9a4d1edea3b60.webp'
+                ]
+            },
+            {
+                id: 'product13',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/11/04/b6/173070517283d7e82d2dfc95f441b62cb9ab249efb.webp',
+                title: 'Mini Bala VibraX – Placer Preciso y Discreto',
+                price: 'Lps. 300.00',
+                stock: 1,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/11/04/b6/173070517283d7e82d2dfc95f441b62cb9ab249efb.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/09/05/f5/1693894738a1a578429bd1e5576b825d7ec99c38a8.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/09/05/f5/1693894738ef545f4e711f5ae298fdbaed7a6e46c5.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/08/16/80/17237997437f04afdf788a5d9a9c0ebd18663ca9b8.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/09/05/f5/169389473823d23345a42d5340ae47e0f08ddcf080.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/08/16/86/17237991426b4348a274bc22cac9c42c843b9257b4.webp'
+                ]
+            },
+            {
+                id: 'product14',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2023/07/24/16901688526a2bb0a1d206b71f70282d6615018835_square.webp',
+                title: 'Dark Desire – Kit BDSM de 11 Piezas para Ataduras y Placer Extremo',
+                price: 'Lps. 700.00',
+                stock: 2,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2023/07/24/16901688526a2bb0a1d206b71f70282d6615018835_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/07/24/169016885254ac7b1136ee1d5d168282cd97db7f11_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/07/24/16901688525737fd24fb319bf3975079998864b27c_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/07/24/1690168852100d79c8d3f15e92c1960274e0aa98cd_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/07/24/16901688533ec9b2891f294734fb810fcac8f2a9d2_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/07/24/1690168852f7eb1e5116046633631359b8d0d10e93_square.webp'
+                ]
+            },
+            {
+                id: 'product15',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/09/16/0b/1726434367fba10fab4a53abb1bc68fad2bb0c7138_square.webp',
+                title: 'Bolsa de Almacenamiento',
+                price: 'Lps. 320.00',
+                stock: 2,
+                size: '',
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/16/0b/1726434367fba10fab4a53abb1bc68fad2bb0c7138_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/07/13/78/1720869524c18f0c9a6c1e8d77081a0df28a092528_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/08/22/4a/172425758826f6c4944755cb25eb2dd47ff24a4935_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/08/22/4a/172425758824b2f506461fd50f2683421dc83e316b_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/08/22/4a/1724257588c924dfadd7877f0f019cb8511c88875a_square.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/a5/172546440178fc111c20c54911f393c4493472b141_square.webp'
+                ]
+            }
+        ];
+
+        const productContainer = document.getElementById('product-container');
+        const modal = document.getElementById('modal-template');
+        const modalImage = document.getElementById('modal-image');
+        const modalThumbnails = document.getElementById('modal-thumbnails');
+        const searchInput = document.getElementById('search-input');
+
+        function renderProducts(filteredProducts) {
+            productContainer.innerHTML = '';
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.onclick = () => openModal(product);
+                
+                let sizeHtml = '';
+                if (product.size !== '') {
+                    sizeHtml = `<p>Talla: ${product.size}</p>`;
+                }
+
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.title}">
+                    <div class="details">
+                        <h3>${product.title}</h3>
+                        ${sizeHtml}
+                        <p class="price">${product.price}</p>
+                    </div>
+                    <span class="stock-label">${product.stock} disponibles</span>
+                `;
+                productContainer.appendChild(productCard);
+            });
+        }
+
+        function filterProducts() {
+            const query = searchInput.value.toLowerCase();
+            const filtered = products.filter(product => {
+                return product.title.toLowerCase().includes(query) || product.size.toLowerCase().includes(query);
+            });
+            renderProducts(filtered);
+        }
+
+        function openModal(product) {
+            modal.style.display = 'block';
+            modalImage.src = product.image;
+            modalThumbnails.innerHTML = '';
+            product.thumbnails.forEach(thumb => {
+                const img = document.createElement('img');
+                img.src = thumb;
+                img.alt = product.title;
+                img.onclick = () => changeImage(img.src);
+                modalThumbnails.appendChild(img);
+            });
+            updateActiveThumbnail(product.image);
+        }
+
+        function changeImage(imageSrc) {
+            modalImage.src = imageSrc;
+            updateActiveThumbnail(imageSrc);
+        }
+
+        function updateActiveThumbnail(imageSrc) {
+            const thumbnails = modalThumbnails.querySelectorAll('img');
+            thumbnails.forEach(thumb => {
+                thumb.classList.remove('active');
+                if (thumb.src === imageSrc) {
+                    thumb.classList.add('active');
+                }
+            });
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts(products);
+        });
+    </script>
+</body>
+</html>

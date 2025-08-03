@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <!-- Ajuste: Se añadió user-scalable=no y maximum-scale=1.0 para deshabilitar el zoom -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Catálogo de</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <!-- CDN para SweetAlert2 y Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <!-- Corrección: Se eliminó la 'x' de 'xintegrity' que causaba el error -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2C6gDLRwD9q+K3P9vC/QWk/dD+W0hG6mE0sA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* Estilos generales y de tipografía */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            text-align: center;
+            background: radial-gradient(circle at top left, #f1dedc 0%, #d8bfbd 100%);
+            color: #4b3832;
+        }
+        
+        .main-container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 90%;
+            max-width: 800px;
+            animation: fadeIn 1s ease-in-out;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em; 
+            letter-spacing: 2px;
+            color: #4b3832; 
+            margin-bottom: 40px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Estilos de los botones principales */
+        .button-group {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .catalog-link {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.2em;
+            border-radius: 15px;
+            transition: all 0.4s ease;
+            width: 300px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .intimo {
+            background: linear-gradient(135deg, #e91e63, #ff4081);
+        }
+
+        .fh {
+            background: linear-gradient(135deg, #880e4f, #c71585);
+        }
+
+        .catalog-link:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        
+        .intimo:hover {
+            box-shadow: 0 0 20px rgba(233, 30, 99, 0.7);
+        }
+        
+        .fh:hover {
+            box-shadow: 0 0 20px rgba(136, 14, 79, 0.7);
+        }
+
+        .catalog-link img {
+            width: 70px;
+            height: auto;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: transform 0.4s ease;
+        }
+        
+        .catalog-link:hover img {
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Estilos de los botones de información */
+        .menu-items {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .menu-items h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2em;
+            color: #4b3832;
+        }
+        
+        .info-button-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .info-link {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1em;
+            border-radius: 15px;
+            transition: all 0.4s ease;
+            width: 200px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #880e4f, #c71585);
+        }
+        
+        .info-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(136, 14, 79, 0.7);
+        }
+        
+        .info-link i {
+            font-size: 2.5em;
+        }
+
+        /* Estilos para la nueva sección de descarga de la app */
+        .download-app-section {
+            margin-top: 40px;
+        }
+
+        .app-download-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .app-link {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.1em;
+            border-radius: 10px;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .app-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .app-link i {
+            font-size: 2em;
+        }
+
+        .playstore-btn {
+            background: linear-gradient(45deg, #4285F4, #34A853);
+        }
+
+        .appstore-btn {
+            background: linear-gradient(45deg, #A5A5A5, #000000);
+        }
+
+        /* Estilos para la nueva sección de búsqueda de Shein */
+        .shein-search-section {
+            margin-top: 40px;
+        }
+        
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        #shein-search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        #shein-search-input:focus {
+            outline: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .search-button {
+            background: linear-gradient(45deg, #e91e63, #ff4081);
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.1em;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .search-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Media queries para dispositivos móviles */
+        @media (max-width: 768px) {
+            body {
+                background: radial-gradient(circle at top left, #f1dedc 0%, #d8bfbd 100%);
+            }
+
+            .main-container {
+                width: 95%;
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 2em; 
+                margin-bottom: 30px;
+            }
+            
+            /* Corrección: Los botones de catálogos ahora ocuparán un ancho del 45% para que quepan dos por fila */
+            .button-group {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .catalog-link {
+                width: 45%; 
+                height: 150px;
+                padding: 15px;
+            }
+
+            .catalog-link:hover {
+                transform: none;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .catalog-link:hover img {
+                transform: none;
+            }
+
+            .menu-items {
+                margin-top: 30px;
+            }
+            
+            /* Corrección: Los botones de información ahora ocuparán un ancho del 45% y se mantendrán horizontales */
+            .info-button-group {
+                gap: 10px;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .info-link {
+                width: 45%;
+                height: 100px; 
+                padding: 15px;
+            }
+            
+            /* Corrección: Los botones de la app se mantienen horizontales, con ancho automático */
+            .app-download-buttons {
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .app-link {
+                width: auto;
+                padding: 10px 20px;
+            }
+        }
+
+        /* ESTILO PERSONALIZADO PARA SWEETALERT2 */
+        .swal2-popup {
+            border-radius: 20px !important;
+            border: 2px solid #4b3832;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background-color: #f1dedc !important;
+        }
+        
+        .swal2-title {
+            color: #4b3832 !important;
+            font-family: 'Playfair Display', serif !important;
+            font-weight: bold !important;
+        }
+        
+        .swal2-html-container {
+            font-family: 'Montserrat', sans-serif !important;
+            color: #4b3832 !important;
+            font-size: 1.1em !important;
+            text-align: left;
+        }
+        
+        .swal2-confirm.swal2-styled {
+            background-color: #e91e63 !important;
+            color: #fff !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease;
+        }
+        
+        .swal2-confirm.swal2-styled:hover {
+            box-shadow: 0 0 10px rgba(233, 30, 99, 0.7);
+        }
+
+        .swal2-cancel.swal2-styled {
+            background-color: #880e4f !important;
+            color: #fff !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease;
+        }
+
+        .swal2-cancel.swal2-styled:hover {
+            box-shadow: 0 0 10px rgba(136, 14, 79, 0.7);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <h1>¡Explora Nuestro Catalogo!</h1>
+        <div class="button-group">
+            <a href="Catálogo de FH.html" class="catalog-link fh">
+                <img src="https://files.jotform.com/jufs/jeancarlozelaya/form_files/Logos%20de%20FH.671e9080384cd7.83486877.png?md5=71TeDIWP4K2g3GsrhcKwrQ&expires=1742264223" alt="Logo Catálogo FH">
+                <span>Fashion House Hn</span>
+            </a>
+            <a href="#" class="catalog-link intimo" onclick="confirmAdultContent()">
+                <img src="https://files.jotform.com/jufs/jeancarlozelaya/form_files/Intimo%20Delights!%20(Sin%20Fondo).6709c792684de5.91296802.png?md5=0fUZptNrCU6RBNmBjRJnOQ&expires=1738546878" alt="Logo Catálogo Íntimo">
+                <span>Intimo Delight!</span>
+            </a>
+        </div>
+
+        <div class="menu-items">
+            <h2>Información y Servicios</h2>
+            <div class="info-button-group">
+                <a href="#" class="info-link" onclick="showSheinOrderInfo()">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>Como hacer un pedido de Shein</span>
+                </a>
+                <a href="#" class="info-link" onclick="showPurchaseRules()">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <span>Reglas de compras</span>
+                </a>
+                <a href="#" class="info-link" onclick="showImportCostInfo()">
+                    <i class="fa-solid fa-truck-fast"></i>
+                    <span>Costo de importación</span>
+                </a>
+                <a href="https://wa.me/50489091836?text=Hola%2C%20quiero%20cotizar%20un%20producto." class="info-link" target="_blank">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    <span>Cotiza con nosotros</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Nueva sección para buscar artículos en Shein -->
+        <div class="shein-search-section">
+            <h2 class="h2">Busca productos en Shein</h2>
+            <div class="search-container">
+                <input type="text" id="shein-search-input" placeholder="Ej: ropa de niño, vestidos, zapatos...">
+                <button class="search-button" onclick="searchShein()">Buscar</button>
+            </div>
+        </div>
+
+
+
+        <!-- Nueva sección para descargar la app de Shein -->
+        <div class="download-app-section">
+            <h2 class="h2">Descarga la app de Shein</h2>
+            <div class="app-download-buttons">
+                <a href="https://apps.apple.com/hn/app/shein-compras-en-l%C3%ADnea/id878577184" target="_blank" class="app-link appstore-btn">
+                    <i class="fa-brands fa-apple"></i>
+                    <span>App Store</span>
+                </a>
+                <a href="https://play.google.com/store/apps/details?id=com.zzkko&hl=es" target="_blank" class="app-link playstore-btn">
+                    <i class="fa-brands fa-google-play"></i>
+                    <span>Google Play</span>
+                </a>
+            </div>
+        </div>
+
+
+        
+    </div>
+
+    <script>
+        // Función para mostrar la alerta de confirmación de edad
+        function confirmAdultContent() {
+            Swal.fire({
+                title: '<strong>¡ADVERTENCIA!</strong>',
+                icon: 'warning',
+                html:
+                    'El contenido de este catálogo es <strong>exclusivo para personas mayores de 18 años</strong>. ' +
+                    'Al continuar, confirmas que cumples con la edad legal para ver este material.',
+                showCloseButton: true,
+                showCancelButton: true,
+                focusConfirm: false,
+                confirmButtonText: 'Sí, soy mayor de 18',
+                cancelButtonText: 'No, salir',
+                buttonsStyling: true,
+                customClass: {
+                    container: 'adult-warning-modal-container',
+                    popup: 'swal2-popup',
+                    title: 'swal2-title',
+                    htmlContainer: 'swal2-html-container',
+                    confirmButton: 'swal2-confirm swal2-styled',
+                    cancelButton: 'swal2-cancel swal2-styled'
+                },
+                confirmButtonColor: '#e91e63',
+                cancelButtonColor: '#880e4f',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "Catálogo de Intimo.html";
+                }
+            });
+        }
+
+        // Función para mostrar la información de cómo hacer un pedido de Shein
+        function showSheinOrderInfo() {
+            Swal.fire({
+                title: '<strong>Cómo hacer un pedido de Shein</strong>',
+                icon: 'info',
+                html:
+                    '<ul style="list-style-type: disc; padding-left: 20px; text-align: left; line-height: 1.5;">' +
+                    '<li>Envíanos los enlaces o fotos de tus artículos, indicando la talla, color y cantidad.</li>' +
+                    '<li>Encarga tus productos cancelando el <strong>70%</strong> de tu total a pagar.</li>' +
+                    '<li>Al llegar tu pedido debes cancelar la <strong>cantidad restante</strong>, junto con el costo correspondiente al peso del paquete.</li>' +
+                    '<li>Realizamos envíos con coste adicional.</li>' +
+                    '</ul>' +
+                    '<hr style="border: 1px solid #ccc; margin: 20px 0;">' +
+                    '<h4 style="text-align: left; margin-top: 20px; margin-bottom: 5px;">Información Adicional:</h4>' +
+                    '<ul style="list-style-type: disc; padding-left: 20px; text-align: left; line-height: 1.5;">' +
+                    '<li>Recibirás la cotización de tus artículos (costo de importación no incluido)</li>' +
+                    '<li>Cierre de pedidos los <strong>Domingos</strong></li>' +
+                    '<li>Tiempo estimado de entrega: <strong>30 a 35 días</strong></li>' +
+                    '</ul>' +
+                    '<hr style="border: 1px solid #ccc; margin: 20px 0;">' +
+                    '<div style="text-align: left; line-height: 1.5; padding-left: 20px;">' + 
+                    '<h4 style="margin-top: 20px; margin-bottom: 5px;">Aceptamos transferencias bancarias</h4>' +
+                    '<ul style="list-style-type: none; padding-left: 0;">' +
+                    '<li>BAC, Atlántida, Banpais, CUSCATLAN, FICOHSA, Tigo Money, Tengo.</li>' +
+                    '<li><strong>También contamos con botón de pago.</strong></li>' +
+                    '</ul>' +
+                    '</div>' +
+                    '<hr style="border: 1px solid #ccc; margin: 20px 0;">' +
+                    '<h4 style="text-align: center; margin-top: 20px; margin-bottom: 5px;">Precios especiales para mayoristas</h4>',
+                showCloseButton: true,
+                showConfirmButton: true,
+                confirmButtonText: 'Entendido',
+                customClass: {
+                    popup: 'swal2-popup',
+                    title: 'swal2-title',
+                    htmlContainer: 'swal2-html-container',
+                    confirmButton: 'swal2-confirm swal2-styled',
+                }
+            });
+        }
+        
+        // Función para mostrar las reglas de compra
+        function showPurchaseRules() {
+            Swal.fire({
+                title: '<strong>Reglas de compras</strong>',
+                icon: 'info',
+                html:
+                    '<div style="text-align: left; line-height: 1.5;">' +
+                    '<p>¡Atención! <strong>Solo tomamos en cuenta los pedidos que hayan cancelado su anticipo correspondiente.</strong> Una vez que llegue tu pedido, debes cancelar el resto, junto con el <strong>costo por peso del paquete</strong>.</p>' +
+                    '<p>Después de ser informado que tu pedido esta listo para entregarse y pasan <strong>10 días</strong> y no has completado el pago o no hemos recibido alguna respuesta en este lapso, lamentablemente, podrías <strong>perder tu pedido y el anticipo</strong>.</p>' +
+                    '<p>Algunos artículos son considerados como delicados ya que necesitan un manejo especial, por lo que son clasificados como <strong>envío lento</strong>. Por esta razón, es posible que puedan demorar de <strong>1 a 2 semanas más</strong> para ser entregados.</p>' +
+                    '</div>' +
+                    '<hr style="border: 1px solid #ccc; margin: 20px 0;">' +
+                    '<div style="text-align: left; line-height: 1.5;">' +
+                    '<p>El precio de los artículos incluyen un porcentaje mínimo de tasa de venta (<strong>7% de ISV</strong>), pero no contempla el peso del envío (<strong>costo de importación</strong>), por lo que este se calculará al momento de la llegada del paquete, la tarifa por libra es la siguiente:</p>' +
+                    '<ul style="list-style-type: disc; padding-left: 20px;">' +
+                    '<li><strong>$6</strong> – de 1 hasta 7 artículos</li>' +
+                    '<li><strong>$5</strong> – de 8 hasta 11 artículos</li>' +
+                    '<li><strong>$4</strong> – de 12 artículos en adelante</li>' +
+                    '</ul>' +
+                    '</div>' +
+                    '<hr style="border: 1px solid #ccc; margin: 20px 0;">' +
+                    '<div style="text-align: left; line-height: 1.5;">' +
+                    '<p>Hacemos <strong>envíos a domicilio</strong> dentro de la ciudad, zonas aledañas y a nivel nacional con <strong>cargo adicional</strong>. 🚚💨</p>' +
+                    '</div>' +
+                    '<hr style="border: 1px solid #ccc; margin: 20px 0;">' +
+                    '<div style="text-align: left; line-height: 1.5;">' +
+                    '<p>Recuerda ¡Tratamos tus artículos con cariño! 💖 Sin embargo, ten en cuenta que, debido a la naturaleza de los envíos internacionales, <strong>no podemos garantizar la integridad de cada artículo</strong>. Por eso, en caso de que un artículo llegue defectuoso o dañado, lamentablemente <strong>no podemos realizar cambios ni devoluciones</strong>.</p>' +
+                    '</div>' +
+                    '<hr style="border: 1px solid #ccc; margin: 20px 0;">' +
+                    '<div style="text-align: center; line-height: 1.5;">' +
+                    '<p><strong>¡Gracias por tu comprensión y confianza en nosotros!</strong></p>' +
+                    '</div>',
+                showCloseButton: true,
+                showConfirmButton: true,
+                confirmButtonText: 'Entendido',
+                customClass: {
+                    popup: 'swal2-popup',
+                    title: 'swal2-title',
+                    htmlContainer: 'swal2-html-container',
+                    confirmButton: 'swal2-confirm swal2-styled',
+                }
+            });
+        }
+
+        // Función para mostrar la información del costo de importación
+        function showImportCostInfo() {
+            Swal.fire({
+                title: '<strong>Costo de importación</strong>',
+                icon: 'info',
+                html:
+                    '<div style="text-align: left; line-height: 1.5;">' +
+                    '<p>El <strong>costo de importación</strong> está constituido por el <strong>precio del producto</strong> más todos los gastos que se incurren hasta que la mercadería llegue al país de destino.</p>' +
+                    '<p>Estos <strong>gastos adicionales</strong> comprenden desde el <strong>flete, seguro, derechos e impuestos</strong> que gravan la importación, transporte, acarreo, y gastos de aduana en general.</p>' +
+                    '<p>La marca <strong>Shein</strong> es una empresa de origen Chino, y por eso es todo un proceso para que sus productos favoritos lleguen hasta sus manos.</p>' +
+                    '<p>Aparte del precio de App, nuestros precios incluyen ya un <strong>costo mínimo de importación</strong> de manera de que sea rentable para todos nuestros clientes.</p>' +
+                    '</div>',
+                showCloseButton: true,
+                showConfirmButton: true,
+                confirmButtonText: 'Entendido',
+                customClass: {
+                    popup: 'swal2-popup',
+                    title: 'swal2-title',
+                    htmlContainer: 'swal2-html-container',
+                    confirmButton: 'swal2-confirm swal2-styled',
+                }
+            });
+        }
+        
+        // Nueva función para buscar en Shein
+        function searchShein() {
+            const searchTerm = document.getElementById('shein-search-input').value.trim();
+            if (searchTerm) {
+                // Se construye la URL base de búsqueda de Shein
+                const baseUrl = "https://us.shein.com/pdsearch/";
+                // Se codifica el término de búsqueda para que sea seguro en la URL
+                const encodedSearchTerm = encodeURIComponent(searchTerm);
+                // Se crea la URL final para redirigir
+                const searchUrl = `${baseUrl}${encodedSearchTerm}`;
+                // Abre la URL en una nueva pestaña
+                window.open(searchUrl, '_blank');
+            } else {
+                Swal.fire({
+                    title: 'Campo vacío',
+                    text: 'Por favor, introduce un término de búsqueda.',
+                    icon: 'warning',
+                    confirmButtonText: 'Entendido',
+                });
+            }
+        }
+    </script>
+</body>
+</html>

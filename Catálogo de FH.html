@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion House HN - Catálogo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <style>
+        /*
+        * AÑADIDO: Esta línea es la que soluciona el problema.
+        * Asegura que el padding y el borde se incluyan en el ancho y alto del elemento.
+        */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f1dedc;
+        }
+        .logo {
+            display: block;
+            margin: 30px auto 20px;
+            width: 150px;
+        }
+        .search-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .search-container input {
+            width: 90%;
+            max-width: 500px;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: 1px solid #DEE2E6;
+            border-radius: 25px;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .search-container input:focus {
+            border-color: #e91e63;
+            box-shadow: 0 2px 8px rgba(233, 30, 99, 0.2);
+        }
+        .product-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+        }
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #FFFFFF;
+            border: 1px solid #DEE2E6;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+            width: calc(50% - 10px); /* Ajuste del ancho para 2 columnas */
+            position: relative;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        .product-card img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .product-card .details {
+            width: 100%;
+        }
+        .product-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin: 0 0 5px;
+            color: #343A40;
+        }
+        .product-card p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            color: #6C757D;
+            margin: 0;
+        }
+        .product-card p.size {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        .product-card .price {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            color: #e91e63;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        .product-card .stock-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #28a745;
+            color: #fff;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 5px 8px;
+            border-radius: 5px;
+            z-index: 10;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 60px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 10px;
+        }
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: #bbb;
+        }
+        .thumbnails {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .thumbnails img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        .thumbnails img:hover, .thumbnails img.active {
+            border-color: #e91e63;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="https://files.jotform.com/jufs/jeancarlozelaya/form_files/Logos%20de%20FH.671e9080384cd7.83486877.png?md5=71TeDIWP4K2g3GsrhcKwrQ&expires=1742264223" alt="Logo Tienda" class="logo">
+
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Buscar productos..." oninput="filterProducts()">
+    </div>
+
+    <div class="product-container" id="product-container">
+        </div>
+
+    <div id="modal-template" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modal-image">
+        <div class="thumbnails" id="modal-thumbnails">
+            </div>
+    </div>
+
+    <script>
+        const products = [
+            {
+                id: 'product1',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/10/26/1b/1729922925e884b0b5da14ad9fd1dad38942a370ad.webp',
+                title: 'Brazalete Pandora en Plata 925',
+                size: '9,1 pulgadas (23 cm)',
+                price: 'Lps. 155.00',
+                stock: 2,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/26/1b/1729922925e884b0b5da14ad9fd1dad38942a370ad.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/26/8a/172992297931e4ff3f905df79168d82129e7698391.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/26/8a/1729922979c70c750cbb95471e7064b5c865caa313.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2025/02/27/63/1740642304cfa8de8d59f45f0d706991fd150baf9c.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/10/26/cc/172992293069c3bc19f99c46a1dd19082c9bfefc9b.webp'
+                ]
+            },
+            {
+                id: 'product2',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2023/09/02/2e/16936479905e3c6689d4287ac1bae235724f6c063d_square_thumbnail_750x.webp',
+                title: 'Alisador de cabello 2 en 1 con 5 velocidades',
+                size: 'N/A',
+                price: 'Lps. 390.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2023/09/02/2e/16936479905e3c6689d4287ac1bae235724f6c063d_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/09/02/d0/1693648003edd4341334a1abf8f701d5754a61a0ec_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/09/02/7a/169364802024dd98cc648c054645883e1657ac0f37_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/09/02/4a/1693648050f80d81f40f196e08b9e5600732c3f35c_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/09/02/78/16936480397eb822257de44f2b587397d2afe2b79a_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/09/02/2b/169364806662ed2f41389fa27ad71a6d00b786ff00_square_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product3',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2025/01/03/89/1735870830c7ad3ca5b721ab108008783bf757b0b0.webp',
+                title: 'Set de Lencería de Encaje',
+                size: 'XXL',
+                price: 'Lps. 395.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2025/01/03/89/1735870830c7ad3ca5b721ab108008783bf757b0b0.webp',
+                    'https://img.ltwebstatic.com/v4/j/spmp/2025/07/10/09/175211854258a752f66c92b08e4426eb7f56a3e4de.webp',
+                    'https://img.ltwebstatic.com/v4/j/spmp/2025/07/10/2e/175211871248836745790d5588035fcf243c321776.webp',
+                    'https://img.ltwebstatic.com/v4/j/spmp/2025/07/23/60/175323723375440979690398a7e9db57d3e4f55f8c.webp',
+                    'https://img.ltwebstatic.com/v4/j/spmp/2025/07/23/3c/1753237235829879a4d848130d228929951509083b.webp',
+                    'https://img.ltwebstatic.com/v4/j/spmp/2025/07/23/cf/1753237238809cf270659194816658f2b92bbae9da.webp'
+                ]
+            },
+
+
+
+            {
+                id: 'product4',
+                image: 'https://img.ltwebstatic.com/images3_pi/2022/08/16/166061788498b4ffbf875aaf5552a0f89aca307433_thumbnail_750x.webp',
+                title: 'Vestido SXY de tirantes y malla',
+                size: 'M',
+                price: 'Lps. 400.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2022/08/16/166061788498b4ffbf875aaf5552a0f89aca307433_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/08/16/16606178763d673747c02f9efbb651925f89c1ac90_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/08/16/1660617874004c1e0bf3cff30a93491fc4826bb7eb_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/08/16/1660617879e1217a80c53fc83712dbfc49ef63aab2_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/08/16/166061788105b1a4587eb0778d8ec88216e5b23c33_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product5',
+                image: 'https://img.ltwebstatic.com/images3_pi/2022/02/28/164601191735860163aae9181d15ee8ec8e0d03b62_thumbnail_750x.webp',
+                title: 'Vestido floral de hombros descubiertos',
+                size: 'M',
+                price: 'Lps. 400.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2022/02/28/164601191735860163aae9181d15ee8ec8e0d03b62_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/02/28/1646011919c88b2d9f7325ae762c43203d70256d07_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/02/28/164601192197f0640b3d1cbe3e53630985edaedd3f_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/02/28/16460119230c58ca79ffedd2d50bf14793d600d3c8_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/02/28/16460119254722fbfaf9e1d595bf3894d7d20f48b9_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product6',
+                image: 'https://img.ltwebstatic.com/images3_pi/2021/12/15/16395337121b490c05be7365e8de750872676c0ee8_thumbnail_750x.webp',
+                title: 'Vestido de tirantes con espalda cruzada',
+                size: 'S',
+                price: 'Lps. 300.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2021/12/15/16395337121b490c05be7365e8de750872676c0ee8_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/12/15/163953371657eaca0450c7f2adecde661ea7a1c641_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/12/15/1639533718bbe330e0d4f1ac2f2d21b402a0eb60fa_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/12/15/1639533721826d59f7a411727af76d2f7357c931b3_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/12/15/16395337225fc0b7bca64d0f20291f10de9f88091e_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product7',
+                image: 'https://img.ltwebstatic.com/images3_pi/2021/06/30/16250323639f3fccf1351db658fecfcc2b6e2b4db4_thumbnail_750x.webp',
+                title: 'Vestido BAE con tirantes y cordón frontal',
+                size: 'M / L',
+                price: 'Lps. 375.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2021/06/30/16250323639f3fccf1351db658fecfcc2b6e2b4db4_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/06/30/1625032364169b36c5de9f2743a6ec09db1e0064fb_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/06/30/16250323623b1295a0140612a1fe2f2e4581899136_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/06/30/16250323588ed59851a98110c431d502ba8b645562_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/06/30/1625032359ca55be35ab2f16007ca08add05e4ea7c_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product8',
+                image: 'https://img.ltwebstatic.com/images3_pi/2024/04/19/ab/17135173088d55a862019a5b1a67919af31ecb85c1_thumbnail_750x.webp',
+                title: 'Vestido Lujo Cristal',
+                size: 'S',
+                price: 'Lps. 1420.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2024/04/19/ab/17135173088d55a862019a5b1a67919af31ecb85c1_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2024/04/19/cb/1713517310acc467b2bc4ac14172a014442722950f_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2025/03/07/c7/1741318837fbbd6d93721b35938b2ede9ccaf90614_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2025/02/14/7e/1739499302507929e78f64d01aed01ad7ddacfae9c_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2025/02/14/ab/1739499303ce6f5d10e2548ccef0939185c4b1e5a3_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2025/02/14/fa/1739499302f4edac026ec861f7ec96689722c47b27_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2024/04/10/a1/1712749228b71f146644b036af45e65d311fce7255_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2025/02/14/63/1739499304a658a660cce26ddb47d78a033f85f803_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product9',
+                image: 'https://img.ltwebstatic.com/images3_pi/2022/03/16/16473935948958793c57923565f2c85bc75c5a1fea_thumbnail_750x.webp',
+                title: 'Conjunto top halter de cuadros y falda con espalda abierta',
+                size: 'M',
+                price: 'Lps. 380.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2022/03/16/16473935948958793c57923565f2c85bc75c5a1fea_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/03/16/1647393596836cd7a0859938f1d0cfb91c9e861220_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/03/16/1647393599c5269bedcfd49de4956987e736baa951_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/03/16/1647393601870fe30bc0536caf14a6c4f062559847_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/03/16/164739360372ac66c04f7cbe79ab2c02298f676790_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product10',
+                image: 'https://img.ltwebstatic.com/images3_pi/2022/06/06/165447865551b34d2395c7263cd0f6591cad219916_thumbnail_750x.webp',
+                title: 'Mono floral halter con encaje y espalda abierta',
+                size: 'S',
+                price: 'Lps. 390.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2022/06/06/165447865551b34d2395c7263cd0f6591cad219916_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/06/06/1654478658c0998be6f2d09e68bc553d8b9721211b_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/06/06/16544786608442aa59f264d84978e603b9a98473d7_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/06/06/165447866301ae6d56830936298853c7f8364a4f54_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/06/06/16544786656c304b22a20d23a9dd0f05edcd1a5432_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product11',
+                image: 'https://img.ltwebstatic.com/images3_pi/2022/04/18/165024828693384c3f082ef0df64f29464493fb1d6_thumbnail_750x.webp',
+                title: 'Top floral de un hombro con cordón',
+                size: 'M',
+                price: 'Lps. 198.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2022/04/18/165024828693384c3f082ef0df64f29464493fb1d6_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/04/18/1650248288e6a849c841ca648c422301a3de72b102_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/04/18/1650248290737364d748ed9ea6acb5706a61dff228_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/04/18/1650248293a599fb69e809058913a1abd5598318df_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/04/18/1650248295e70750e39c263f95331dc32db6713039_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/04/18/165024829892d7e908c98dcad0dd899bae008f9e5d_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product12',
+                image: 'https://img.ltwebstatic.com/images3_pi/2022/05/31/165396431567fcedb4945b0c2682de0096f3c2770f_thumbnail_750x.webp',
+                title: 'Top tropical de cuello cuadrado',
+                size: 'S',
+                price: 'Lps. 198.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2022/05/31/165396431567fcedb4945b0c2682de0096f3c2770f_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/05/31/1653964318f716eb7b61e8769e292b30ee5f2abbf5_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/05/31/1653964320a15fa882a07b40b0d5bd1b342db12b98_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/05/31/1653964323ee592295dfb60e97ef0bad3ecc56ff8a_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/05/31/1653964329ae1fb7a339fa61380db46f3d836104a6_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product13',
+                image: 'https://img.ltwebstatic.com/images3_pi/2021/09/01/163045923156fc1b7026ea08fade4adde0a92b250d_thumbnail_750x.webp',
+                title: 'Top unicolor con manga farol',
+                size: 'L',
+                price: 'Lps. 198.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/01/163045923156fc1b7026ea08fade4adde0a92b250d_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/01/16304592335042fc0423a7d76788b224ee55921c60_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/01/1630459235457655a5c5044dd0effea30f625e77b9_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/01/16304592377af7bad39395228805748e83e2fd1e03_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/01/1630459240abe3f111dd559d80b30a4f2705511b1a_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product14',
+                image: 'https://img.ltwebstatic.com/images3_pi/2021/09/17/1631872850ed48116b5d0858dd5697a3c51c469804_thumbnail_750x.webp',
+                title: 'Top corto de rayas con nudo delantero',
+                size: 'M',
+                price: 'Lps. 198.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/17/1631872850ed48116b5d0858dd5697a3c51c469804_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/17/16318728580a3a0b97e06600c8344005815d2a368c_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/17/163187286281340d77c50079c5929a5ce677a01eff_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/17/163187286661b4b468b7fa6cdc2427bc9b6c5c6349_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/17/1631872871b840ae501f452c17ca1bfc2caaf376d6_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/17/1631872873787020688da642ffe88f0aae85a704a6_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product15',
+                image: 'https://www.jotform.com/uploads/jeancarlozelaya/form_files/1_5dea06db5a8669873252d08e57d6b05a.jpg',
+                title: 'Top con lazos ajustables',
+                size: 'XS',
+                price: 'Lps. 198.00',
+                stock: 1,
+                thumbnails: [
+                    'https://www.jotform.com/uploads/jeancarlozelaya/form_files/1_5dea06db5a8669873252d08e57d6b05a.jpg',
+                    'https://files.jotform.com/jufs/jeancarlozelaya/form_files/2_d0b1cc58ddf778649bec118a958a0312.png?md5=S4mAGeKa0RbuuR0KVUo_wA&expires=1742268081',
+                    'https://files.jotform.com/jufs/jeancarlozelaya/form_files/3_b55070f2aa46cb7682081b3adbfe3142.png?md5=Dh4peeUVjcnpl6TM2aiyNw&expires=1742268081',
+                    'https://files.jotform.com/jufs/jeancarlozelaya/form_files/4_57ada5199263d34932193a98f84c8288.png?md5=srk26G5JaAe-ZVpCBbaJZQ&expires=1742268081'
+                ]
+            },
+
+            // ROPA DE NIÑO
+            {
+                id: 'product16',
+                image: 'https://img.ltwebstatic.com/images3_pi/2022/11/11/1668151155a7aee6b0f7beb6613bc613fe1a07edf5_thumbnail_750x.webp',
+                title: 'Abrigo de bebé con capucha y botón',
+                size: '2-3 años',
+                price: 'Lps. 270.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2022/11/11/1668151155a7aee6b0f7beb6613bc613fe1a07edf5_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/11/11/166815115736991692477f098ad970363f4af31d2f_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/11/11/166815115975e4e6352d9b0368fc6a6f0e7c189cbf_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/11/11/166815116172ae0114767777f6de06f782ed177c10_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/11/11/1668151166574ed075440301748b8f7c56d23fac63_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product17',
+                image: 'https://img.ltwebstatic.com/images3_pi/2021/10/11/163392123811d12c23dd5a32c887873ef0ca194ddf_thumbnail_750x.webp',
+                title: 'Mono con capucha y cremallera para niñas',
+                size: '7 años',
+                price: 'Lps. 275.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2021/10/11/163392123811d12c23dd5a32c887873ef0ca194ddf_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/10/11/16339212402bd1e5b3e53855c0db3ee030c0ef5803_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/10/11/16339212446045dca30ca1ae5cd656c466cd86b5f7_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/10/11/16339212499b0971750ccfb07e9a50d1f78b3e9889_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/10/11/1633921251d4fcc9bd88cc9f13674b5ae9240992ff_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product18',
+                image: 'https://img.ltwebstatic.com/images3_pi/2025/01/20/34/1737354134792a4e00bd3ac0cab5740c45eade0681_thumbnail_750x.webp',
+                title: 'Camiseta y Shorts con Estampado de Vaca',
+                size: '4 años',
+                price: 'Lps. 430.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2025/01/20/34/1737354134792a4e00bd3ac0cab5740c45eade0681_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2025/01/20/35/1737354131616c19dc28f2726d4370c0f48e96fbaf_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2025/01/20/61/1737354128d3a7faf1936159db97b9a61dcb4d8f63_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2025/01/20/3d/173735413892283eb73136edd66449838b8ca4b7fd_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2025/01/20/d2/17373541405e49de16f6d6eaae95d1b913e1735ad6_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product19',
+                image: 'https://img.ltwebstatic.com/images3_pi/2021/09/06/1630897342091139c00fd36df227b13c25e3fd02af_thumbnail_750x.webp',
+                title: 'Sudadera con volantes y detalle de letras para niñas',
+                size: '4 años',
+                price: 'Lps. 220.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/06/1630897342091139c00fd36df227b13c25e3fd02af_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/06/163089734629aad6927dff9fe821106a0839674ed6_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/06/163089735009ebcb8b94e807741c0b510ac232dfd4_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/06/1630897352c08037695fbd65317bd7aea3fd96493a_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/09/06/1630897354e8e9cdaf8e2490f788742534c0e07f2e_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product20',
+                image: 'https://img.ltwebstatic.com/images3_pi/2021/10/09/1633747215bb8940c54752346da8af8343b635522f_thumbnail_750x.webp',
+                title: 'Top y camiseta de hombros caídos con estampado',
+                size: '11-12 años',
+                price: 'Lps. 220.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2021/10/09/1633747215bb8940c54752346da8af8343b635522f_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/10/09/1633747217ccbc7d8e961ca3d5c11d9f66240f2df8_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/10/09/163374721809288b95e4c43c31c3122a9d7f89c7c0_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/10/09/1633747221a9fdb5322bd1a2cdafcc9c7f5a0fc004_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/10/09/16337472236cf2f73a3c549b191675ddf5e580d3c9_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2021/10/09/16337472252996a4308774da953eac3e42f48dcdc8_thumbnail_750x.webp'
+                ]
+            },
+            // ROPA Y ACCESORIOS DE HOMBRE
+            {
+                id: 'product21',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/05/23/a3/171646472841e34e625607d871f39ef49c964f544c_thumbnail_750x.webp',
+                title: 'Conjunto de 4 camisetas de compresión para entrenamiento',
+                size: 'XL',
+                price: 'Lps. 796.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/23/a3/171646472841e34e625607d871f39ef49c964f544c_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/23/e8/17164647328b774a6f9716ec41c60c9b642382aa7c_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/23/de/1716464748d5fff7b14f0e684c8f37bf95d9e57582_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/23/da/1716464724a110538fe9c74b5b9d656ab512f0f1ed_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product22',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/05/06/3d/1714986251febedb3606fcf9081dc90a070b2dc959_square_thumbnail_750x.webp',
+                title: 'Corbata Clásica Verde Salvia',
+                size: '',
+                price: 'Lps. 135.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/06/3d/1714986251febedb3606fcf9081dc90a070b2dc959_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/06/3d/171498625156676c24fa3f8555130078158f066ad1_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/06/3d/1714986251cf51875164aae8d5bb0ae89db3da11dc_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/06/3d/1714986251c887513bf824522d429ffd11e2dd447b_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/07/47/1715070210845250cc5b3ec9754278b61db2dc9920_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/07/a0/17150699160b6922dbde8fb07ea6ed4d402a1ea73c_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/21/8a/17162577010d8db0d341f562eff1ab82034858beb9_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/21/8a/17162577010d8db0d341f562eff1ab82034858beb9_square_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product23',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2025/02/20/dc/174001623595dff2538e13cf883296ee4566f11eae_thumbnail_750x.webp',
+                title: 'Zapatos Elegance Marrón',
+                size: 'US13.5 (EUR47)',
+                price: 'Lps. 960.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2025/02/20/dc/174001623595dff2538e13cf883296ee4566f11eae_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/11/99/1715430511ff05d245d319b5123643180f073c4b89_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/11/99/17154305112e044b954089b5e00c86186adcdbda27_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/05/11/99/171543051152d961b9634a28d3c98bd06ffcd18d39_square_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product24',
+                image: 'https://img.ltwebstatic.com/images3_pi/2023/04/19/16818947053f0c27a2e9bc00ee9d7f8c2d103a1332_thumbnail_750x.webp',
+                title: 'Zapatos Elegancia Británica',
+                size: 'US13.5 (EUR47)',
+                price: 'Lps. 1300.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2023/04/19/16818947053f0c27a2e9bc00ee9d7f8c2d103a1332_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2023/04/19/168189470740cb6dd6b3f27c474e7956538b9c990c_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2023/04/19/16818947119b0298fef55ff451e4621437270444b2_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product25',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2024/03/31/aa/171187314554185720bc924072d00945d1759328c2_square_thumbnail_750x.webp',
+                title: 'Sandalias DualCore Verano',
+                size: 'US13.5 (EUR47)',
+                price: 'Lps. 400.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2024/03/31/aa/171187314554185720bc924072d00945d1759328c2_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/03/31/aa/17118731455f6b113c498222f4dc3887cbeefa8292_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/03/31/aa/1711873145431c6f53b67948dc5b0ecb799358de99_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/03/31/aa/17118731453823ea70b818ef079828e197406f5ce6_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/03/31/aa/17118731451255961524ea44837aa741c8674f0887_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2024/03/31/aa/17118731453def3052742a0e0b5845045c36492484_square_thumbnail_750x.webp'
+                ]
+            },
+
+            // ACCESORIOS GENERALES
+
+            {
+                id: 'product26',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2023/10/16/4b/16974644008b93b075810127803a5874029f724387_square_thumbnail_750x.webp',
+                title: 'Funda 3 en 1 GripMax',
+                size: 'Galaxy A22 5G',
+                price: 'Lps. 105.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2023/10/16/4b/16974644008b93b075810127803a5874029f724387_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/10/16/97/16974644203026ad630267a5b0d7f7f2f278b608fa_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/10/16/97/16974644207e266d6121a289fcee684e10983ed2c5_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/10/16/7e/1697464421f471efddd4103085f9231f876537c933_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/10/16/7e/169746442125113ca51c866d5515b2f6b7ca59c033_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/10/16/97/1697464420ab7699a8db121a281536dfcd33f1145b_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/10/16/89/16974644198f9d00e3aead432dde4badb0c0638c1b_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/10/16/7e/16974644211910d2e3a9cd408cdaffeaa43ec336d6_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/10/16/7e/1697464421c163bb817b6eafcf5c84d8eb34ec8935_square_thumbnail_750x.webp'
+                ]
+            },
+
+            {
+                id: 'product27',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2023/08/28/89/1693211261c7834356e5a4ba3575170dccfa358503_thumbnail_750x.webp',
+                title: 'Set de 3 fundas antigolpes con diseño de ojos y letras',
+                size: 'Iphone 11 Pro Max',
+                price: 'Lps. 120.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2023/08/28/89/1693211261c7834356e5a4ba3575170dccfa358503_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/08/28/9f/16932112594448e186c4a61f2668086b8f28ad90df_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/08/28/d9/1693211260613282fb265bcdd94f2ea9380fbcd9ef_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/08/28/9f/169321125941bc24814641ed54de76bc0fff5a48e4_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/08/28/9f/1693211259d9c97157772115a0716a36588efb2262_thumbnail_750x.webp'
+                ]
+            },
+
+            {
+                id: 'product28',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2023/06/30/1688117126aa7228c6c6c00eeaca0d908a3ad0e203_square_thumbnail_750x.webp',
+                title: 'Guantes protectores para motocicleta',
+                size: 'L',
+                price: 'Lps. 320.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/30/1688117126aa7228c6c6c00eeaca0d908a3ad0e203_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/30/168811715966457d8155895c3eb726b93234db74b9_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/30/1688117159dac219b514ed8dab109f66c43e6c4921_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/30/1688117159a09f0e553095db192c5bb0a92747a65c_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/06/30/16881171593ff5f97dc7479b252b5b8d438fd261e2_square_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product29',
+                image: 'https://img.ltwebstatic.com/images3_pi/2023/04/08/168094771082def2060a2f2ce05df02ce6de9ed885_thumbnail_750x.webp',
+                title: 'Set de uñas postizas decoradas con flores',
+                size: '24 piezas',
+                price: 'Lps. 100.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_pi/2023/04/08/168094771082def2060a2f2ce05df02ce6de9ed885_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2023/04/08/168094771251329889362b3934c728d255bbc08759_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2023/04/08/1680947714ede8b9633c73ae33101f743d12535b23_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2022/04/01/164880600397297992818ca0cf5bbaae3906a273a8_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_pi/2023/04/08/1680947716299d40979b93515770a28b9d375ba631_thumbnail_750x.webp'
+                ]
+            },
+            {
+                id: 'product30',
+                image: 'https://img.ltwebstatic.com/images3_spmp/2023/12/25/b7/17034875636c834d31d29bf7f2ef18aef86fff00c7_square_thumbnail_750x.webp',
+                title: 'Picador de verduras en ondas',
+                size: 'N/A',
+                price: 'Lps. 120.00',
+                stock: 1,
+                thumbnails: [
+                    'https://img.ltwebstatic.com/images3_spmp/2023/12/25/b7/17034875636c834d31d29bf7f2ef18aef86fff00c7_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/12/25/1c/1703487562d8259cc7f71a4188fa1fa4e065ff92e9_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/12/25/b7/1703487563a92ddd1a19bdbad9b42c9e843109a271_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/12/25/1c/170348756263e6b55f6166826d1ab8fc2cbdb99f4f_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/12/25/11/1703487843cf297a74eb876dd9534324330032e36f_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/12/25/b7/1703487563785a64036de2c9145a377f5279121833_square_thumbnail_750x.webp',
+                    'https://img.ltwebstatic.com/images3_spmp/2023/12/25/b7/1703487563c3ac04cf3e6a014b04adf5f513c711df_square_thumbnail_750x.webp'
+                ]
+            },
+
+
+        ];
+
+        function renderProducts(filteredProducts = products) {
+            const productContainer = document.getElementById('product-container');
+            productContainer.innerHTML = '';
+
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.onclick = () => openModal(product.id);
+
+                const productStock = document.createElement('div');
+                productStock.className = 'stock-label';
+                productStock.textContent = `${product.stock} disponibles`;
+
+                const productImage = document.createElement('img');
+                productImage.src = product.image;
+
+                const productDetails = document.createElement('div');
+                productDetails.className = 'details';
+
+                const productTitle = document.createElement('h3');
+                productTitle.textContent = product.title;
+
+                const productSize = document.createElement('p');
+                productSize.className = 'size';
+                productSize.textContent = `Talla: ${product.size}`;
+
+                const productPrice = document.createElement('p');
+                productPrice.className = 'price';
+                productPrice.textContent = product.price;
+
+                productDetails.appendChild(productTitle);
+                productDetails.appendChild(productSize);
+                productDetails.appendChild(productPrice);
+
+                productCard.appendChild(productStock);
+                productCard.appendChild(productImage);
+                productCard.appendChild(productDetails);
+
+                productContainer.appendChild(productCard);
+            });
+        }
+
+        function filterProducts() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const filteredProducts = products.filter(product =>
+                product.title.toLowerCase().includes(searchInput)
+            );
+            renderProducts(filteredProducts);
+        }
+
+        function openModal(productId) {
+            const product = products.find(p => p.id === productId);
+            const modal = document.getElementById('modal-template');
+            const modalImage = document.getElementById('modal-image');
+            const modalThumbnails = document.getElementById('modal-thumbnails');
+
+            modalImage.src = product.image;
+            modalThumbnails.innerHTML = '';
+
+            product.thumbnails.forEach((thumbnail, index) => {
+                const thumbnailImage = document.createElement('img');
+                thumbnailImage.src = thumbnail;
+                thumbnailImage.onclick = () => changeImage(thumbnail);
+                if (index === 0) {
+                    thumbnailImage.classList.add('active');
+                }
+                modalThumbnails.appendChild(thumbnailImage);
+            });
+
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal-template');
+            modal.style.display = 'none';
+        }
+
+        function changeImage(src) {
+            const modalImage = document.getElementById('modal-image');
+            modalImage.src = src;
+            const thumbnails = document.querySelectorAll('.thumbnails img');
+            thumbnails.forEach(thumb => {
+                thumb.classList.remove('active');
+                if (thumb.src === src) {
+                    thumb.classList.add('active');
+                }
+            });
+        }
+
+        window.onload = () => {
+            renderProducts();
+        };
+    </script>
+</body>
+</html>
