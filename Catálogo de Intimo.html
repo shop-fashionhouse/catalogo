@@ -109,6 +109,29 @@
             border-radius: 5px;
             z-index: 10;
         }
+        .product-card .stock-label.out-of-stock {
+            background-color: #dc3545;
+        }
+        /* Estilos para productos agotados */
+        .product-card.out-of-stock {
+            opacity: 0.7;
+            position: relative;
+        }
+        .product-card.out-of-stock::after {
+            content: "AGOTADO";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 24px;
+            font-weight: bold;
+            color: #dc3545;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 5;
+            pointer-events: none;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -287,7 +310,7 @@
                 thumbnails: [
                     'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/172238907867e69d485a573c5746557ea100342930.webp',
                     'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/1722389078bcdc22172cf94f764f2532a1388ca308.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/1722389078ce65e1fbeaeafb2fa0b3c73de2870c8c.gif',
+                    'https://img.ltwebstatic.com images3_spmp/2024/07/31/77/1722389078ce65e1fbeaeafb2fa0b3c73de2870c8c.gif',
                     'https://img.ltwebstatic.com/images3_spmp/2024/07/31/a6/1722389079bdd9c3f65f4749a29edfd220f9043caf.gif',
                     'https://img.ltwebstatic.com/images3_spmp/2024/08/22/be/1724289035af2c3b2deed8243c8f60c9c906291bbb.webp',
                     'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/1722389078b8b626065fd5ad3532d5878a8f729ac3.webp'
@@ -371,7 +394,7 @@
                     'https://img.ltwebstatic.com/images3_spmp/2023/09/05/f5/1693894738a1a578429bd1e5576b825d7ec99c38a8.webp',
                     'https://img.ltwebstatic.com/images3_spmp/2023/09/05/f5/1693894738ef545f4e711f5ae298fdbaed7a6e46c5.webp',
                     'https://img.ltwebstatic.com/images3_spmp/2024/08/16/80/17237997437f04afdf788a5d9a9c0ebd18663ca9b8.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/09/05/f5/169389473823d23345a42d5340ae47e0f08ddcf080.webp',
+                    'https://img.ltwebstatic.com images3_spmp/2023/09/05/f5/169389473823d23345a42d5340ae47e0f08ddcf080.webp',
                     'https://img.ltwebstatic.com/images3_spmp/2024/08/16/86/17237991426b4348a274bc22cac9c42c843b9257b4.webp'
                 ]
             },
@@ -420,12 +443,22 @@
             filteredProducts.forEach(product => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
+                
+                // Añadir clase out-of-stock si el stock es 0
+                if (product.stock === 0) {
+                    productCard.classList.add('out-of-stock');
+                }
+                
                 productCard.onclick = () => openModal(product);
                 
                 let sizeHtml = '';
                 if (product.size !== '') {
                     sizeHtml = `<p>Talla: ${product.size}</p>`;
                 }
+
+                // Cambiar color de la etiqueta de stock si está agotado
+                const stockLabelClass = product.stock === 0 ? 'stock-label out-of-stock' : 'stock-label';
+                const stockText = product.stock === 0 ? 'Agotado' : `${product.stock} disponibles`;
 
                 productCard.innerHTML = `
                     <img src="${product.image}" alt="${product.title}">
@@ -434,7 +467,7 @@
                         ${sizeHtml}
                         <p class="price">${product.price}</p>
                     </div>
-                    <span class="stock-label">${product.stock} disponibles</span>
+                    <span class="${stockLabelClass}">${stockText}</span>
                 `;
                 productContainer.appendChild(productCard);
             });
@@ -485,11 +518,10 @@
             if (event.target === modal) {
                 closeModal();
             }
-        };
+        }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderProducts(products);
-        });
+        // Inicializar la página
+        renderProducts(products);
     </script>
 </body>
 </html>
