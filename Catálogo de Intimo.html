@@ -3,20 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intimo Delights!</title>
+    <title>Intimo Delights! - Catálogo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         * {
             box-sizing: border-box;
         }
-
+        
+        :root {
+            --primary-color: #e91e63;
+            --dark-color: #34495e;
+            --light-gray: #f5f7fa;
+            --border-color: #ddd;
+            --transition: all 0.3s ease;
+            /* NOVEDAD: Color de advertencia añadido */
+            --warning-color: #f39c12; 
+        }
+        
         body {
             font-family: 'Montserrat', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #fce4ec;
+            background-color: #f1dedc;
+            padding-bottom: 100px;
         }
         .logo {
             display: block;
@@ -42,117 +56,268 @@
             border-color: #e91e63;
             box-shadow: 0 2px 8px rgba(233, 30, 99, 0.2);
         }
-        .product-container {
+        
+        #catalog-loader {
+            grid-column: 1 / -1; 
             display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            padding: 80px 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--dark-color);
+        }
+        .loader-dots {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 60px;
+            margin-bottom: 15px;
+        }
+        .loader-dots .dot {
+            width: 15px;
+            height: 15px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            margin: 0 5px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .loader-dots .dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+        .loader-dots .dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { 
+                transform: scale(0);
+            } 40% { 
+                transform: scale(1.0);
+            }
+        }
+
+
+        .product-container {
+            display: none; 
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
             padding: 20px;
         }
         .product-card {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            justify-content: space-between;
             background-color: #FFFFFF;
-            border: 1px solid #DEE2E6;
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            transition: var(--transition);
             text-align: center;
-            width: calc(50% - 10px);
             position: relative;
+            overflow: hidden;
         }
         .product-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .product-card-clickable {
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .product-card img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            width: 100%;
+            height: 200px;
+            object-fit: contain; 
+            background-color: var(--light-gray); 
+            transition: transform 0.3s ease; 
         }
+        .product-card-clickable:hover img {
+            transform: scale(1.05); 
+        }
+
         .product-card .details {
             width: 100%;
+            padding: 15px; 
+            padding-bottom: 30px; 
         }
         .product-card h3 {
             font-family: 'Playfair Display', serif;
-            font-size: 18px;
+            font-size: 1.1rem; 
+            font-weight: 600; 
             margin: 0 0 5px;
-            color: #343A40;
+            color: var(--dark-color); 
+            min-height: 44px; 
         }
         .product-card p {
             font-family: 'Montserrat', sans-serif;
-            font-size: 14px;
+            font-size: 0.9rem; 
             color: #6C757D;
             margin: 0;
         }
+        .product-card p.size {
+            font-size: 0.8rem; 
+            color: #999;
+            margin-bottom: 10px;
+        }
         .product-card .price {
             font-family: 'Montserrat', sans-serif;
-            font-size: 18px;
-            color: #e91e63;
+            font-size: 1.25rem; 
+            color: var(--primary-color);
             font-weight: 700;
             margin-top: 10px;
+            margin-bottom: 0; 
         }
         .product-card .stock-label {
             position: absolute;
             top: 10px;
             right: 10px;
-            background-color: #28a745;
+            background-color: rgba(40, 167, 69, 0.9); 
             color: #fff;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 0.8rem; 
             padding: 5px 8px;
             border-radius: 5px;
             z-index: 10;
         }
-        .product-card .stock-label.out-of-stock {
-            background-color: #dc3545;
-        }
-        /* Estilos para productos agotados */
-        .product-card.out-of-stock {
-            opacity: 0.7;
-            position: relative;
-        }
 
+        /* --- NOVEDAD: Estilo para la etiqueta de "Usado" --- */
+        .product-card .details .condition-label {
+            background-color: var(--warning-color);
+            color: #fff;
+            font-weight: bold;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        /* --- FIN NOVEDAD --- */
+
+
+        .add-to-cart-btn {
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            border-radius: 50%; 
+            padding: 0;
+            font-size: 24px; 
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(233, 30, 99, 0.2);
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            width: 40px; 
+            height: 40px; 
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        .add-to-cart-btn:hover {
+            background-color: #c2185b;
+            box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
+            transform: translateY(-2px) scale(1.05); 
+        }
+        .add-to-cart-btn.out-of-stock {
+            background-color: #999;
+            cursor: not-allowed;
+            box-shadow: none;
+            font-size: 20px; 
+        }
+        .add-to-cart-btn.out-of-stock:hover {
+             transform: none;
+             background-color: #999;
+        }
+        
+        
+        /* --- Modal de Galería (Vista Previa) --- */
         .modal {
-            display: none;
+            display: none; 
             position: fixed;
             z-index: 1000;
-            padding-top: 60px;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.9);
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
         }
-        .modal-content {
-            margin: auto;
-            display: block;
-            max-width: 90%;
-            max-height: 80%;
+
+        .gallery-modal-content {
+            background-color: #fff;
             border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            margin: auto;
+            padding: 15px;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
+
+        .gallery-main-image-wrapper {
+            width: 100%;
+            aspect-ratio: 1 / 1; 
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+            background-color: #fdfdfd; 
+        }
+        .gallery-main-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            display: block;
+        }
+
         .close {
             position: absolute;
-            top: 20px;
-            right: 35px;
-            color: #fff;
-            font-size: 40px;
+            top: 10px;
+            right: 10px;
+            color: #fff; 
+            background-color: rgba(0, 0, 0, 0.5); 
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 24px; 
             font-weight: bold;
-            transition: 0.3s;
+            transition: all 0.3s ease;
             cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            padding-bottom: 2px; 
         }
         .close:hover {
-            color: #bbb;
+            background-color: rgba(0, 0, 0, 0.8); 
+            color: #fff;
+            transform: scale(1.05);
+        }
+
+
+        .thumbnails-wrapper {
+            overflow-x: auto; 
+            overflow-y: hidden; 
+            white-space: nowrap; 
+            padding-bottom: 5px; 
         }
         .thumbnails {
-            text-align: center;
-            margin-top: 10px;
+            text-align: left; 
+            margin-top: 0;
         }
         .thumbnails img {
             width: 60px;
@@ -160,16 +325,354 @@
             object-fit: cover;
             margin: 5px;
             cursor: pointer;
-            border: 2px solid transparent;
-            transition: border-color 0.3s ease;
             border-radius: 5px;
+            border: 2px solid #ddd; 
+            transition: border-color 0.3s ease;
+            display: inline-block; 
         }
         .thumbnails img:hover, .thumbnails img.active {
             border-color: #e91e63;
         }
+
+        /* --- Botón Flotante del Carrito --- */
+        #view-cart-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #c2185b;
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        /* --- Modal del Carrito (Fondo Claro) --- */
+        .cart-modal {
+            display: none; 
+            position: fixed;
+            z-index: 1001; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+        .cart-modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .cart-modal-content .close {
+            position: absolute;
+            background-color: transparent; 
+            color: #aaa;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            width: auto; 
+            height: auto; 
+            padding: 0; 
+        }
+        .cart-modal-content .close:hover {
+            color: #333;
+            background-color: transparent; 
+            transform: none; 
+        }
+        
+        
+        .cart-modal-content h2 {
+            font-family: 'Playfair Display', serif;
+            text-align: center;
+            margin-top: 0;
+            color: #333;
+        }
+        #cart-items-list {
+            list-style: none;
+            padding: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+        .cart-item-details {
+            flex-grow: 1;
+        }
+        .cart-item-details h4 {
+            margin: 0 0 2px;
+            font-size: 16px;
+            color: #333;
+        }
+        .cart-item-details p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .cart-item-details p.item-size {
+             font-size: 12px; color: #888; margin-bottom: 5px;
+        }
+        .cart-item-details .cart-item-price {
+            font-size: 14px;
+            color: #e91e63;
+            font-weight: 600;
+        }
+        
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+        }
+        .cart-item-actions button {
+            background: #e91e63;
+            color: white;
+            border: none;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 28px;
+        }
+        .cart-item-actions button:hover {
+            background: #c2185b;
+        }
+        .cart-item-actions button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .cart-item-actions span {
+            margin: 0 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        #cart-total {
+            text-align: right;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #333;
+        }
+        
+        .cart-footer-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .checkout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-grow: 1;
+            background-color: #25D366; 
+            color: white;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .checkout-btn:hover {
+            background-color: #128C7E;
+        }
+        .checkout-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .clear-cart-btn {
+            background-color: #999;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .clear-cart-btn:hover {
+            background-color: #777;
+        }
+        
+        /* --- NOVEDAD: Estilos de la notificación (Toast) actualizados --- */
+        #toast-notification {
+            visibility: hidden;
+            min-width: 250px;
+            max-width: 90%;
+            background-color: var(--primary-color); /* Color de marca */
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 16px;
+            position: fixed;
+            z-index: 2000;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 30px;
+            font-size: 1rem;
+            font-weight: 600; /* Texto más nítido */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            
+            /* Para alinear el ícono */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        /* Clase de advertencia */
+        #toast-notification.warning {
+            background-color: var(--warning-color);
+        }
+        
+        #toast-notification.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s; 
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;} 
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;} 
+            to {bottom: 0; opacity: 0;}
+        }
+        /* --- Fin Estilos Notificación --- */
+
+
+        .social-footer {
+            text-align: center;
+            padding: 40px 20px 30px;
+            margin-top: 50px;
+            border-top: 1px solid #ddd;
+        }
+        .social-footer p {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+        }
+        .social-footer .social-links a {
+            color: var(--dark-color);
+            margin: 0 15px;
+            font-size: 2rem; 
+            transition: var(--transition);
+        }
+        .social-footer .social-links a:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+
+        @media (max-width: 768px) {
+            .product-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                padding: 10px;
+            }
+            .product-card img {
+                height: 130px; 
+            }
+            .product-card .details {
+                padding: 10px;
+                padding-bottom: 25px; 
+            }
+            .product-card h3 {
+                font-size: 0.9rem;
+                min-height: 36px;
+                margin-bottom: 0;
+            }
+            .product-card p.size {
+                font-size: 0.75rem;
+                margin-bottom: 5px;
+            }
+            .product-card .price {
+                font-size: 1rem;
+                margin-top: 5px;
+            }
+            .product-card .stock-label {
+                font-size: 0.7rem;
+                padding: 3px 5px;
+            }
+
+            /* --- NOVEDAD: Estilo responsivo para etiqueta "Usado" --- */
+            .product-card .details .condition-label {
+                font-size: 0.7rem;
+                padding: 3px 5px;
+                margin-bottom: 8px;
+            }
+            /* --- FIN NOVEDAD --- */
+            
+            .add-to-cart-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 20px;
+                bottom: 8px;
+                right: 8px;
+            }
+        }
+        
     </style>
 </head>
 <body>
+
+    <div id="toast-notification"></div>
 
     <img src="https://files.jotform.com/jufs/jeancarlozelaya/form_files/Intimo%20Delights!%20(Sin%20Fondo).6709c792684de5.91296802.png?md5=0fUZptNrCU6RBNmBjRJnOQ&expires=1738546878" alt="Logo Tienda" class="logo">
 
@@ -177,426 +680,432 @@
         <input type="text" id="search-input" placeholder="Buscar productos..." oninput="filterProducts()">
     </div>
 
-    <div class="product-container" id="product-container">
+    <div id="catalog-loader">
+        <div class="loader-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+        <p>Cargando productos...</p>
     </div>
 
-    <div id="modal-template" class="modal">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <img class="modal-content" id="modal-image">
-        <div class="thumbnails" id="modal-thumbnails">
+    <div class="product-container" id="product-container">
+        </div>
+
+    <div id="gallery-modal" class="modal" onclick="closeModal()">
+        <div class="gallery-modal-content" onclick="event.stopPropagation()">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="gallery-main-image-wrapper">
+                <img class="gallery-main-image" id="modal-image">
+            </div>
+            <div class="thumbnails-wrapper">
+                <div class="thumbnails" id="modal-thumbnails">
+                    </div>
+            </div>
         </div>
     </div>
 
+    <button id="view-cart-btn" onclick="openCartModal()">
+        🛒
+        <span id="cart-count">0</span>
+    </button>
+
+    <div id="cart-modal" class="modal cart-modal" onclick="closeCartModal()">
+        <div class="cart-modal-content" onclick="event.stopPropagation()">
+            <span class="close" onclick="closeCartModal()">&times;</span>
+            <h2>Tu Carrito</h2>
+            <ul id="cart-items-list">
+                </ul>
+            <div id="cart-total">
+                Total: Lps. 0.00
+            </div>
+            
+            <div class="cart-footer-buttons">
+                <button class="clear-cart-btn" onclick="clearCart()">Vaciar</button>
+                <button class="checkout-btn" onclick="sendToWhatsApp()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                      <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.504.658.67-2.431-.155-.248a6.56 6.56 0 0 1-1.003-3.399c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.626-2.957 6.584-6.591 6.584zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+                    </svg>
+                    Enviar Pedido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="social-footer">
+        <p>¡Síguenos en nuestras redes!</p>
+        <div class="social-links">
+            <a href="https://www.facebook.com/IntimoDelights/" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/shein.fashionhousehn" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" id="footer-whatsapp-link" target="_blank" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+    </footer>
+
+
     <script>
-        const products = [
+        let products = [];
+        let cart = []; 
+        const WHATSAPP_NUMBER = '50497510121';
+        
+        const CURRENCY_SYMBOL = 'Lps.';
+        
+        function formatCurrency(number) {
+            const num = parseFloat(number) || 0;
+            return `${CURRENCY_SYMBOL} ${num.toFixed(2)}`;
+        }
 
-            {
-                id: 'product99',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2024/12/20/c1/17346780634fd71f191caa288f7763ecf131b40a73.webp',
-                title: 'Dildo Transparente con Ventosa',
-                price: 'Lps. 410.00',
-                stock: 2,
-                size: '19cm',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2024/12/20/c1/17346780634fd71f191caa288f7763ecf131b40a73.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/12/20/ec/17346781618474ac8c9a0349823aba9a3f981601d8.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/12/20/da/1734678363ee450cde546abe6c525a00f636950aad.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/12/20/ec/1734678161f7b81aa8c50822cb2643a658284871e7.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/12/20/55/17346783361bbff95d90ff15c1441f73a2ead90076.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/12/20/ec/17346781610780b9aa2a56a7be92eff82af04c20c4.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/12/20/3d/1734678637b5140a2ed5fcb153e48885cbca19c39d.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/12/20/86/1734678363d5f09eb1b3c2e2f6458a8622c4bd3f0d.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/12/20/3d/17346786376807192693fd22533fca75214a6fae02.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2025/01/02/90/1735807802061c1fa83e53a3f98625f85b9d564acd.webp'
-                ]
-            },
+        function saveCartToStorage() {
+            localStorage.setItem('shoppingCart', JSON.stringify(cart));
+        }
 
-            {
-                id: 'product98',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2024/08/10/e2/17232545000d1b3a5c1631088343f96188ddf03a6f.webp',
-                title: 'Vibrador Anal Telescópico con App',
-                price: 'Lps. 990.00',
-                stock: 1,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/10/e2/17232545000d1b3a5c1631088343f96188ddf03a6f.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/12/02/b9/1733122918f417e245d47205800ae7b30acea0008e.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/06/8b/17229328988cae5ae02f2bcd55ef2dcd0616d0f732.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/06/a0/1722932895a21e5eabdd35e4f83860b43d960e4b41.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/06/cf/1722932896bf580276273f8f53d310818462b7caa5.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/06/25/17229328973eec1c25a9a0ed0c27166ea7bc73a278.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/06/65/1722932902f6961868b6cbfe046722aab44c194f9b.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/06/65/17229329028d6c27adf0549bc8bcc35685ed52dd1a.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/06/f9/1722932886251e281fe1a2b7c2ee1d748e4f34ff7e.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/06/f9/17229328861c7f24301eb8b1634f9ab3cc3bd78b0e.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/06/0f/1722932878a1ffc5e4be87a7e9fba783204e747067.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/06/f9/17229328868b67681817ca8703f07f975ceee02e06.webp'
-                ]
-            },
+        function loadCartFromStorage() {
+            cart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+        }
 
-            {
-                id: 'product97',
-                image: 'https://img.ltwebstatic.com/v4/j/spmp/2025/07/31/90/175392760141bd5834c3a965515eab24b583c8773a.webp',
-                title: 'Vibrador Anal con App',
-                price: 'Lps. 990.00',
-                stock: 1,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/v4/j/spmp/2025/07/31/90/175392760141bd5834c3a965515eab24b583c8773a.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/24/f2/17271504410d844c12a3165cbbc8aabe353e131650.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/24/f6/17271576078c9c0ba36c3d826f8eac85e959e8e29d.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/24/68/172715761511fa082bb07cffb2fb6f0025ee4e106e.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2025/02/11/07/17392591870824a4bee5a53fa6c017b023651b030b.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2025/02/11/3e/1739259185126b4a1b4870e8d2e7348ea1bd1c1a5a.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2025/02/11/b2/1739259186a5e63062dd36be21408240c5bf23f047.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2025/02/11/4e/17392591866885777803a7ee8b695ba349b40045d9.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2025/02/11/89/1739259186df144afb21769f54b43c71de75092e4c.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2025/02/11/eb/17392591870d8a66872806dfd6ccc0cb6d7cda9cb8.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2025/02/11/72/1739259186bc908718b72ce90f3986f0ee26a15475.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2025/02/11/3b/173925918595cb27db0770e836a269a4706d2bcb33.webp'
-                ]
-            },
+        function clearCart() {
+            cart = [];
+            saveCartToStorage();
+            updateCartUI();
+            renderCart(); 
+            closeCartModal(); 
+        }
 
-            {
-                id: 'product96',
-                image: 'https://ae04.alicdn.com/kf/S17586e9c51084f87854f8a29d8b7341bW.jpg',
-                title: 'Vibrador Punto G con App',
-                price: 'Lps. 990.00',
-                stock: 2,
-                size: '',
-                thumbnails: [
-                    'https://ae04.alicdn.com/kf/S17586e9c51084f87854f8a29d8b7341bW.jpg',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/30/1688109756efb06c2f8e532b8ab6b969de14bba625.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/30/168810978624c1678daf4b2b9c9d8d254f89fea03f.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/30/1688109786f168463f238b09cd96a47d10ccb05cf5.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/30/1688109785497e258059d31d7a26b8337bfa2ac214.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/30/16881097867546f6e3fc188ff2e8cc155cc295b70f.webp'
-                ]
-            },
+        // ***** FUNCIÓN MODIFICADA *****
+        function renderProducts(filteredProducts = products) {
+            const productContainer = document.getElementById('product-container');
+            productContainer.innerHTML = ''; 
 
-
-
-
-
-            {
-                id: 'product1',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2024/09/04/7d/17254572424b636c2f1b4e370ed5401fa37ef82b84.webp',
-                title: 'Lubricante Frutal de Fresa - Suavidad y Placer',
-                price: 'Lps. 400.00',
-                stock: 4,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/7d/17254572424b636c2f1b4e370ed5401fa37ef82b84.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/7d/1725457242016bdf58c91be1fface7267ec7d54af1.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/7d/1725457242e5cd7782e4ce473af9be70bab04c5606.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/d9/1725457243c0b7dffd53eac8eb208edf093dd0549a.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/bb/1725457320b71ee9d3c0c5d1678913d9aad24c216b.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/7d/17254572422d227944d563cd0b60cc3dd9c78f499c.webp'
-                ]
-            },
-            {
-                id: 'product2',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2023/06/27/1687880142e2950754f103e0d2af5204533d7f157f_thumbnail_750x999.webp',
-                title: 'Enema - Ducha Íntima para Limpieza Profunda',
-                price: 'Lps. 230.00',
-                stock: 3,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/27/1687880142e2950754f103e0d2af5204533d7f157f_thumbnail_750x999.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/27/16878801448ea96896135dd22c4ce226082c710d5d_thumbnail_750x999.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/27/1687880145df30b0b07588bd29ddeba8dd825cff01_thumbnail_750x999.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/27/1687880145cd3e425792bbe68ffe4287d7714688f8_thumbnail_750x999.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/27/1687880146484cdfb2c27ff1a98d2971fe0bb4f511_thumbnail_750x999.webp'
-                ]
-            },
-            {
-                id: 'product3',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2024/09/27/b4/1727406835aedfe040373e8b24ccc15acb321cbb8a_square.webp',
-                title: 'Estimulador Anal Inalámbrico con Control Remoto',
-                price: 'Lps. 380.00',
-                stock: 1,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/27/b4/1727406835aedfe040373e8b24ccc15acb321cbb8a_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/27/e1/17274068854112022064bb7ad30f64ba06965618ba_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/10/07/6a/1728282772a3ef711e0e1e8e0beada77aa35f9914a_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/27/69/1727406909086e62524032f566fe6637e1c06125b6_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/27/e3/1727406919083f3b26838496bc2bb1be37aa3d5833_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/27/ec/172740693033d3a777a8cc236aae55db0c66661d0f_square.webp'
-                ]
-            },
-            {
-                id: 'product4',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2023/11/17/7a/1700189317ec49a02f7c6d02634c2ab6e54cd48431.webp',
-                title: 'Masturbador Masculino Portátil',
-                price: 'Lps. 700.00',
-                stock: 3,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/7a/1700189317ec49a02f7c6d02634c2ab6e54cd48431.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/7a/17001893176033f2236f7bbdd63bb05fd2206c3281.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/7a/1700189317db7ece359d415ea793ba4bc245c1d47a.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/8c/1700189328d297cc91e9f89433c74a549fb503ed5d.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/7a/1700189317a5a3e576af9c8297abbc894863702f17.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/7a/1700189317678dae4888f2a539b576576ab0177f7e.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/11/17/8c/17001893285dfb366fdbb1fba90a731accd061ee02.webp'
-                ]
-            },
-            {
-                id: 'product5',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2023/06/13/168662838368c912f7560d52128a892eb088dcbd1f.webp',
-                title: 'Huevo Vibrador Inalámbrico',
-                price: 'Lps. 410.00',
-                stock: 1,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/168662838368c912f7560d52128a892eb088dcbd1f.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/16866283714dc205a092d38004e458110962ab3fb0.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/1686628360b3ec05efa27ea5b717fbadfbf23418f2.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/1686628359c5aca1b374d3a30c57e6f6a48bdf76d1.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/1686628359c4ece4f99cfcdd179985b671ae999064.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/1686628359c4122eec7879ef14c8483ecfb9332636.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/13/16866283601b47bb6320feeedf93b0693d67e197ff.webp'
-                ]
-            },
-            {
-                id: 'product6',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2024/09/13/b2/17261983465ce15cc7dc82c6598ba4c99241fc149f.webp',
-                title: 'Magic Wand - Estimulador Potente y Compacto',
-                price: 'Lps. 410.00',
-                stock: 3,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/13/b2/17261983465ce15cc7dc82c6598ba4c99241fc149f.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/13/46/1726198266707c10a1fb3b728bc1b13bd77889ca42.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/13/46/1726198266fa358eb6037a697504b621e2e0fc8244.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/13/50/1726198267b0a2dbdbedb085cb8aea8ae674f7bd8a.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/13/46/172619826602b13a3460b01d5e7bc2fc6332e1724a.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/13/8a/17261982863cbd29926e9a138f21738cc91cbe71ec.webp'
-                ]
-            },
-            {
-                id: 'product7',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/172238907867e69d485a573c5746557ea100342930.webp',
-                title: 'Estimulador Vaginal de 10 Velocidades',
-                price: 'Lps. 700.00',
-                stock: 4,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/172238907867e69d485a573c5746557ea100342930.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/1722389078bcdc22172cf94f764f2532a1388ca308.gif',
-                    'https://img.ltwebstatic.com images3_spmp/2024/07/31/77/1722389078ce65e1fbeaeafb2fa0b3c73de2870c8c.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/07/31/a6/1722389079bdd9c3f65f4749a29edfd220f9043caf.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/22/be/1724289035af2c3b2deed8243c8f60c9c906291bbb.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/07/31/77/1722389078b8b626065fd5ad3532d5878a8f729ac3.webp'
-                ]
-            },
-            {
-                id: 'product8',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2024/11/04/11/173071253592e92528d29e7b15e00812dc8e75f775.webp',
-                title: 'Dildo Realista de 8.7"',
-                price: 'Lps. 900.00',
-                stock: 1,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2024/11/04/11/173071253592e92528d29e7b15e00812dc8e75f775.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/01/25/4c/170615243722e9091b6871f6d644f827d636cd18e4.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/10/29/ce/1730167002f9c6b97e3355cba953e2918caf514492.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/10/29/ce/17301670025b8d4aa2fa5ac21f29c45f13c7f62b98.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/01/25/4c/17061524373e9a66c310767a0795937a3623d79aee.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/01/25/4c/170615243745a509289e3805cb847d0be3167ab43e.webp'
-                ]
-            },
-            {
-                id: 'product9',
-                image: 'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/1f64783a-de40-4c33-86a7-1ab6d2898378.jpg',
-                title: 'Varita Vibradora Potente',
-                price: 'Lps. 990.00',
-                stock: 2,
-                size: '',
-                thumbnails: [
-                    'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/1f64783a-de40-4c33-86a7-1ab6d2898378.jpg',
-                    'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/e5ecc26c-d7d1-46d8-913d-689d8ffbe555.jpg',
-                    'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/a90d8ef3-da92-4dc3-88e8-c022a1db4225.jpg',
-                    'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/49b8a38d-713c-4f9d-99d8-3f9cd3573328.jpg',
-                    'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/ef1dd05e-3afb-47b6-8e04-118c995cc8df.jpg',
-                    'https://img4.dhresource.com/webp/m/0x0/f3/albu/km/g/21/d448044c-f89b-4807-b57f-1be042f5f3c0.jpg'
-                ]
-            },
-            {
-                id: 'product10',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2024/10/15/64/1728957434b31591409de0da34df4d0904618b6240.webp',
-                title: 'Vibrador con Embestida Realista y Ultra Placer',
-                price: 'Lps. 990.00',
-                stock: 0,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2024/10/15/64/1728957434b31591409de0da34df4d0904618b6240.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/13/1728466914c46b17eef4de853305263f1c84e35d09.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/09/172846657012d7a06e6196656edf3be47b9c28915e.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/d9/1728466923c730210b0df6dd513cff4874b46e8328.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/71/1728466939c28b58d37a17063ec8de036b3d4bf932.gif',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/16/1728466972dc114ba415a23b8ccb691bb042fa194b.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/00/17284669938d3bf4987710fafcd16ecef9f6d91b4d.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/10/09/17/17284669311d49deea9e09312fecc12225a32c2d79.gif'
-                ]
-            },
-
-            {
-                id: 'product12',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2024/03/07/91/17097866539ac0cb3a2666fa9fe30ae032e9acdcc8.webp',
-                title: 'Secret Bliss – Mini Vibrador Discreto y Potente',
-                price: 'Lps. 300.00',
-                stock: 2,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2024/03/07/91/17097866539ac0cb3a2666fa9fe30ae032e9acdcc8.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/16/16868915191552831613193cae35f4459ed3ffd919.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/16/16868915199b8cd0cf194bc2ec420cd6c46431f0a4.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/16/16868915196657b7bae28cdfa5ae7709c03c58e837.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/06/16/16868915191ed953ecdf350a7f58d9a4d1edea3b60.webp'
-                ]
-            },
-            {
-                id: 'product13',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2024/11/04/b6/173070517283d7e82d2dfc95f441b62cb9ab249efb.webp',
-                title: 'Mini Bala VibraX – Placer Preciso y Discreto',
-                price: 'Lps. 300.00',
-                stock: 1,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2024/11/04/b6/173070517283d7e82d2dfc95f441b62cb9ab249efb.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/09/05/f5/1693894738a1a578429bd1e5576b825d7ec99c38a8.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/09/05/f5/1693894738ef545f4e711f5ae298fdbaed7a6e46c5.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/16/80/17237997437f04afdf788a5d9a9c0ebd18663ca9b8.webp',
-                    'https://img.ltwebstatic.com images3_spmp/2023/09/05/f5/169389473823d23345a42d5340ae47e0f08ddcf080.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/16/86/17237991426b4348a274bc22cac9c42c843b9257b4.webp'
-                ]
-            },
-            {
-                id: 'product14',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2023/07/24/16901688526a2bb0a1d206b71f70282d6615018835_square.webp',
-                title: 'Dark Desire – Kit BDSM de 11 Piezas para Ataduras y Placer Extremo',
-                price: 'Lps. 700.00',
-                stock: 2,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2023/07/24/16901688526a2bb0a1d206b71f70282d6615018835_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/07/24/169016885254ac7b1136ee1d5d168282cd97db7f11_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/07/24/16901688525737fd24fb319bf3975079998864b27c_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/07/24/1690168852100d79c8d3f15e92c1960274e0aa98cd_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/07/24/16901688533ec9b2891f294734fb810fcac8f2a9d2_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2023/07/24/1690168852f7eb1e5116046633631359b8d0d10e93_square.webp'
-                ]
-            },
-            {
-                id: 'product15',
-                image: 'https://img.ltwebstatic.com/images3_spmp/2024/09/16/0b/1726434367fba10fab4a53abb1bc68fad2bb0c7138_square.webp',
-                title: 'Bolsa de Almacenamiento',
-                price: 'Lps. 320.00',
-                stock: 2,
-                size: '',
-                thumbnails: [
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/16/0b/1726434367fba10fab4a53abb1bc68fad2bb0c7138_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/07/13/78/1720869524c18f0c9a6c1e8d77081a0df28a092528_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/22/4a/172425758826f6c4944755cb25eb2dd47ff24a4935_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/22/4a/172425758824b2f506461fd50f2683421dc83e316b_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/08/22/4a/1724257588c924dfadd7877f0f019cb8511c88875a_square.webp',
-                    'https://img.ltwebstatic.com/images3_spmp/2024/09/04/a5/172546440178fc111c20c54911f393c4493472b141_square.webp'
-                ]
+            if (filteredProducts.length === 0) {
+                 productContainer.innerHTML = '<p style="text-align: center; padding: 40px; grid-column: 1 / -1;">No se encontraron productos.</p>';
+                 return;
             }
-        ];
 
-        const productContainer = document.getElementById('product-container');
-        const modal = document.getElementById('modal-template');
-        const modalImage = document.getElementById('modal-image');
-        const modalThumbnails = document.getElementById('modal-thumbnails');
-        const searchInput = document.getElementById('search-input');
-
-        function renderProducts(filteredProducts) {
-            productContainer.innerHTML = '';
             filteredProducts.forEach(product => {
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
+
+                const clickablePart = document.createElement('div');
+                clickablePart.className = 'product-card-clickable';
+                clickablePart.onclick = () => openModal(product.id);
+
+                const productStock = document.createElement('div');
+                productStock.className = 'stock-label';
+                productStock.textContent = `${product.stock} disponibles`;
                 
-                // Añadir clase out-of-stock si el stock es 0
-                if (product.stock === 0) {
-                    productCard.classList.add('out-of-stock');
+                const productImage = document.createElement('img');
+                productImage.src = product.image; 
+                productImage.loading = 'lazy';
+
+                const productDetails = document.createElement('div');
+                productDetails.className = 'details';
+
+                // --- NOVEDAD: Añadir etiqueta de "Usado" ---
+                if (product.condition && product.condition === 'X') {
+                    const conditionLabel = document.createElement('div');
+                    conditionLabel.className = 'condition-label';
+                    conditionLabel.textContent = 'Usado (Como Nuevo)';
+                    productDetails.appendChild(conditionLabel); // Se añade antes del título
                 }
+                // --- FIN NOVEDAD ---
+
+                const productTitle = document.createElement('h3');
+                productTitle.textContent = product.title; 
+
+                const productSize = document.createElement('p');
+                productSize.className = 'size';
+                productSize.textContent = `Talla: ${product.size}`; 
+
+                const productPrice = document.createElement('p');
+                productPrice.className = 'price';
+                productPrice.textContent = formatCurrency(product.price); 
+
+                productDetails.appendChild(productTitle);
+                productDetails.appendChild(productSize);
+                productDetails.appendChild(productPrice);
+
+                clickablePart.appendChild(productStock);
+                clickablePart.appendChild(productImage); 
+                clickablePart.appendChild(productDetails);
+
+                const addToCartButton = document.createElement('button');
+                addToCartButton.className = 'add-to-cart-btn';
+                addToCartButton.innerHTML = '+'; 
                 
-                productCard.onclick = () => openModal(product);
-                
-                let sizeHtml = '';
-                if (product.size !== '') {
-                    sizeHtml = `<p>Talla: ${product.size}</p>`;
+                addToCartButton.onclick = (ev) => {
+                    ev.stopPropagation(); 
+                    addToCart(product.id);
+                };
+
+                if (product.stock <= 0) {
+                    addToCartButton.innerHTML = 'X'; 
+                    addToCartButton.className = 'add-to-cart-btn out-of-stock';
+                    addToCartButton.disabled = true;
                 }
 
-                // Cambiar color de la etiqueta de stock si está agotado
-                const stockLabelClass = product.stock === 0 ? 'stock-label out-of-stock' : 'stock-label';
-                const stockText = product.stock === 0 ? 'Agotado' : `${product.stock} disponibles`;
-
-                productCard.innerHTML = `
-                    <img src="${product.image}" alt="${product.title}">
-                    <div class="details">
-                        <h3>${product.title}</h3>
-                        ${sizeHtml}
-                        <p class="price">${product.price}</p>
-                    </div>
-                    <span class="${stockLabelClass}">${stockText}</span>
-                `;
+                productCard.appendChild(clickablePart);
+                productCard.appendChild(addToCartButton); 
                 productContainer.appendChild(productCard);
             });
         }
 
         function filterProducts() {
-            const query = searchInput.value.toLowerCase();
-            const filtered = products.filter(product => {
-                return product.title.toLowerCase().includes(query) || product.size.toLowerCase().includes(query);
-            });
-            renderProducts(filtered);
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const filteredProducts = products.filter(product =>
+                product.title.toLowerCase().includes(searchInput)
+            );
+            renderProducts(filteredProducts);
         }
 
-        function openModal(product) {
-            modal.style.display = 'block';
-            modalImage.src = product.image;
+        // --- Lógica de Modal de Galería ---
+        function openModal(productId) {
+            const product = products.find(p => p.id === productId); 
+            if (!product) return; 
+
+            const modal = document.getElementById('gallery-modal');
+            const modalImage = document.getElementById('modal-image');
+            const modalThumbnails = document.getElementById('modal-thumbnails');
+
+            modalImage.src = product.image; 
             modalThumbnails.innerHTML = '';
-            product.thumbnails.forEach(thumb => {
-                const img = document.createElement('img');
-                img.src = thumb;
-                img.alt = product.title;
-                img.onclick = () => changeImage(img.src);
-                modalThumbnails.appendChild(img);
-            });
-            updateActiveThumbnail(product.image);
+
+            if (Array.isArray(product.thumbnails)) {
+                product.thumbnails.forEach((thumbnail, index) => {
+                    const thumbnailImage = document.createElement('img');
+                    thumbnailImage.src = thumbnail;
+                    thumbnailImage.onclick = () => changeImage(thumbnail);
+                    if (thumbnail === product.image || index === 0) {
+                        thumbnailImage.classList.add('active');
+                    }
+                    modalThumbnails.appendChild(thumbnailImage);
+                });
+            }
+
+            modal.style.display = 'flex';
         }
 
-        function changeImage(imageSrc) {
-            modalImage.src = imageSrc;
-            updateActiveThumbnail(imageSrc);
+        function closeModal() {
+            document.getElementById('gallery-modal').style.display = 'none';
         }
 
-        function updateActiveThumbnail(imageSrc) {
-            const thumbnails = modalThumbnails.querySelectorAll('img');
+        function changeImage(src) {
+            const modalImage = document.getElementById('modal-image');
+            modalImage.src = src;
+            const thumbnails = document.querySelectorAll('#gallery-modal .thumbnails img');
             thumbnails.forEach(thumb => {
                 thumb.classList.remove('active');
-                if (thumb.src === imageSrc) {
+                if (thumb.src === src) {
                     thumb.classList.add('active');
                 }
             });
         }
+        
+        // --- INICIO DE LÓGICA DEL CARRITO ---
+        
+        let toastTimer;
+        
+        // NOVEDAD: showToast ahora acepta un tipo ('success' o 'warning')
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast-notification');
+            if (!toast) return;
+            
+            let icon = '<i class="fas fa-check-circle"></i>';
+            toast.classList.remove('warning'); // Quitar clase de advertencia por si acaso
 
-        function closeModal() {
-            modal.style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            if (event.target === modal) {
-                closeModal();
+            if (type === 'warning') {
+                icon = '<i class="fas fa-exclamation-triangle"></i>';
+                toast.classList.add('warning'); // Añadir clase de advertencia
             }
+            
+            toast.innerHTML = `${icon} ${message}`;
+            toast.classList.add('show');
+            
+            clearTimeout(toastTimer);
+            
+            toastTimer = setTimeout(() => { 
+                toast.classList.remove('show'); 
+            }, 3000); 
         }
 
-        // Inicializar la página
-        renderProducts(products);
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const cartItem = cart.find(item => item.id === productId);
+            
+            if (cartItem) {
+                if (cartItem.quantity < product.stock) {
+                    cartItem.quantity++;
+                    showToast("¡Producto añadido!"); 
+                } else {
+                    // NOVEDAD: Mensaje de advertencia
+                    showToast("¡Ya tienes la cantidad máxima!", 'warning'); 
+                    return; 
+                }
+            } else {
+                cart.push({ ...product, quantity: 1 });
+                showToast("¡Producto añadido!"); 
+            }
+            
+            saveCartToStorage(); 
+            updateCartUI();
+        }
+        
+        function updateCartUI() {
+            const cartCount = document.getElementById('cart-count');
+            let totalItems = 0;
+            cart.forEach(item => {
+                totalItems += item.quantity;
+            });
+            cartCount.textContent = totalItems;
+        }
+
+        function openCartModal() {
+            renderCart();
+            document.getElementById('cart-modal').style.display = 'flex';
+        }
+
+        function closeCartModal() {
+            document.getElementById('cart-modal').style.display = 'none';
+        }
+
+        function renderCart() {
+            const cartList = document.getElementById('cart-items-list');
+            const cartTotalEl = document.getElementById('cart-total');
+            cartList.innerHTML = '';
+            let totalGeneral = 0;
+
+            if (cart.length === 0) {
+                cartList.innerHTML = '<li><p style="text-align: center; color: #777;">Tu carrito está vacío.</p></li>';
+                cartTotalEl.textContent = `Total: ${formatCurrency(0)}`;
+                return;
+            }
+
+            cart.forEach(item => {
+                const product = products.find(p => p.id === item.id);
+                const stock = product ? product.stock : item.quantity; 
+                const isStockMaxed = (item.quantity >= stock);
+
+                const priceAsNumber = parseFloat(item.price) || 0;
+                const subtotal = priceAsNumber * item.quantity;
+                totalGeneral += subtotal;
+
+                const li = document.createElement('li');
+                li.className = 'cart-item';
+                
+                li.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}">
+                    <div class="cart-item-details">
+                        <h4>${item.title}</h4>
+                        <p class="item-size">Talla: ${item.size}</p>
+                        <p class="cart-item-price">${formatCurrency(item.price)} (Subtotal: ${formatCurrency(subtotal)})</p>
+                    </div>
+                    <div class="cart-item-actions">
+                        <button onclick="updateCartQuantity('${item.id}', -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="updateCartQuantity('${item.id}', 1)" ${isStockMaxed ? 'disabled' : ''}>+</button>
+                    </div>
+                `;
+                cartList.appendChild(li);
+            });
+
+            cartTotalEl.textContent = `Total: ${formatCurrency(totalGeneral)}`;
+        }
+        
+        function updateCartQuantity(productId, change) {
+            const cartItem = cart.find(item => item.id === productId);
+            if (!cartItem) return;
+            
+            const newQuantity = cartItem.quantity + change;
+
+            if (newQuantity <= 0) {
+                cart = cart.filter(item => item.id !== productId);
+            } else {
+                const product = products.find(p => p.id === productId);
+                 if (newQuantity > product.stock) {
+                    // NOVEDAD: Mensaje de advertencia
+                    showToast("¡Ese es todo el stock!", 'warning'); 
+                    return;
+                }
+                cartItem.quantity = newQuantity;
+            }
+
+            saveCartToStorage(); 
+            renderCart(); 
+            updateCartUI(); 
+        }
+
+        function sendToWhatsApp() {
+            if (cart.length === 0) {
+                // NOVEDAD: Mensaje de advertencia
+                showToast("Tu carrito está vacío.", 'warning'); 
+                return;
+            }
+
+            let message = "¡Hola! 👋 Me gustaría hacer un pedido de los siguientes artículos de Intimo Delights!:\n\n";
+            let totalGeneral = 0;
+
+            cart.forEach(item => {
+                const priceAsNumber = parseFloat(item.price) || 0;
+                const subtotal = priceAsNumber * item.quantity;
+                totalGeneral += subtotal;
+
+                message += `*ID:* ${item.id}\n`;
+                message += `*Producto:* ${item.title}\n`;
+                message += `*Talla:* ${item.size}\n`;
+                message += `*Cantidad:* ${item.quantity}\n`;
+                message += `*Precio:* ${formatCurrency(item.price)}\n`;
+                message += `------------------------\n`;
+            });
+
+            message += `\n*TOTAL DEL PEDIDO: ${formatCurrency(totalGeneral)}*`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+            
+            window.open(whatsappURL, '_blank');
+            
+            clearCart();
+        }
+
+        // --- FIN DE LÓGICA DEL CARRITO ---
+
+        window.onload = () => {
+            loadCartFromStorage();
+            updateCartUI(); 
+            
+            const footerWhatsAppLink = document.getElementById('footer-whatsapp-link');
+            if (footerWhatsAppLink) {
+                footerWhatsAppLink.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("¡Hola! Tengo una consulta sobre Intimo Delights!")}`;
+            }
+
+            const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyfkmjLeXyd5y3cNrGXO9X0cbVEfepuxUjJ2WQ9Xn16P76ZQiY8Lvj4VWPeIE2Uh1ofFg/exec';
+
+            const productContainer = document.getElementById('product-container');
+            const loader = document.getElementById('catalog-loader');
+
+
+            fetch(WEB_APP_URL)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                         throw new Error(data.error);
+                    }
+                    products = data; 
+                    
+                    loader.style.display = 'none'; 
+                    productContainer.style.display = 'grid'; 
+                    
+                    renderProducts(products); 
+                    
+                    if(document.getElementById('cart-modal').style.display === 'flex') {
+                        renderCart();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar productos:', error);
+                    loader.style.display = 'none'; 
+                    productContainer.style.display = 'block'; 
+                    productContainer.innerHTML = '<p style="text-align: center; padding: 40px;">No se pudieron cargar los productos. Intenta de nuevo más tarde.</p>';
+                });
+        };
     </script>
 </body>
 </html>
